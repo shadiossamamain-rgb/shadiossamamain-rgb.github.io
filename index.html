@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -56,6 +56,9 @@
   --field-text:  rgba(237,227,209,.9);
   --field-head:  #E9B9A2;
   --field-rule:  rgba(237,227,209,.22);
+  --on-accent:   #F7F1E6;   /* ink on top of an accent-filled surface */
+  --glyph-bg:    #5A1020;   /* the S mark */
+  --title-on-field: #EDE3D1;
 
   --shadow-card: 0 18px 34px -26px rgba(90,16,32,.6);
   --grain-op:    .045;
@@ -88,10 +91,44 @@
   --field-text:  rgba(237,224,204,.9);
   --field-head:  #E3927F;
   --field-rule:  rgba(237,224,204,.2);
+  --on-accent:   #1C1013;
+  --glyph-bg:    #E3927F;
+  --title-on-field: #F0E2CC;
 
   --shadow-card: 0 18px 34px -24px rgba(0,0,0,.8);
   --grain-op:    .05;
   --grain-blend: screen;
+}
+
+/* No-JS / system default. The head script stamps data-theme before first
+   paint when scripting is on; this covers the case where it is not. */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+
+    --bg:          #1C1013;
+    --surface:     #261619;
+    --surface-2:   #2E1B1F;
+    --heading:     #F0E2CC;
+    --accent:      #E3927F;
+    --text:        #EDE0CC;
+    --muted:       #B3A08C;
+    --rule:        rgba(237,224,204,.16);
+    --rule-soft:   rgba(237,224,204,.08);
+    --brass:       #C89B62;
+
+    --field-bg:    #3A1219;
+    --field-text:  rgba(237,224,204,.9);
+    --field-head:  #E3927F;
+    --field-rule:  rgba(237,224,204,.2);
+    --on-accent:   #1C1013;
+    --glyph-bg:    #E3927F;
+    --title-on-field: #F0E2CC;
+
+    --shadow-card: 0 18px 34px -24px rgba(0,0,0,.8);
+    --grain-op:    .05;
+    --grain-blend: screen;
+  }
 }
 
 *,*::before,*::after{ box-sizing:border-box; }
@@ -133,7 +170,7 @@ img{ max-width:100%; display:block; }
 
 .skip{
   position:absolute; left:-999px; top:0; z-index:1000;
-  background:var(--field-bg); color:var(--bg); padding:.7rem 1.1rem;
+  background:var(--field-bg); color:var(--field-text); padding:.7rem 1.1rem;
   font-family:var(--mono); font-size:.8rem; text-decoration:none;
 }
 .skip:focus{ left:.5rem; top:.5rem; }
@@ -171,13 +208,12 @@ img{ max-width:100%; display:block; }
 .nav__glyph{
   width:1.9rem; height:1.9rem; flex:none;
   display:grid; place-items:center;
-  background:var(--field-bg); color:var(--bg);
+  background:var(--glyph-bg); color:var(--on-accent);
   font-family:var(--display); font-weight:700; font-size:1.05rem;
   font-variation-settings:"SOFT" 0,"WONK" 1;
   border-radius:4px;
   transition:background-color .35s ease, color .35s ease;
 }
-:root[data-theme="dark"] .nav__glyph{ background:var(--accent); color:#1C1013; }
 .nav__name{ font-family:var(--mono); font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; }
 
 .nav__links{ display:flex; gap:1.4rem; }
@@ -212,8 +248,15 @@ img{ max-width:100%; display:block; }
 }
 .theme-toggle:hover{ color:var(--heading); border-color:var(--accent); }
 .theme-toggle svg{ width:1rem; height:1rem; }
+.theme-toggle .i-sun{ display:none; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .theme-toggle .i-sun{ display:block; }
+  :root:not([data-theme="light"]) .theme-toggle .i-moon{ display:none; }
+}
+:root[data-theme="dark"] .theme-toggle .i-sun{ display:block; }
 :root[data-theme="dark"] .theme-toggle .i-moon{ display:none; }
 :root[data-theme="light"] .theme-toggle .i-sun{ display:none; }
+:root[data-theme="light"] .theme-toggle .i-moon{ display:block; }
 
 @media (max-width: 60rem){
   .nav{ gap:.85rem; }
@@ -265,8 +308,7 @@ img{ max-width:100%; display:block; }
 }
 
 .section__title{ font-size:clamp(2rem, 1.3rem + 2.6vw, 3.2rem); }
-.section--field .section__title{ color:var(--bg); }
-:root[data-theme="dark"] .section--field .section__title{ color:var(--heading); }
+.section--field .section__title{ color:var(--title-on-field); }
 .section__lede{ margin-top:1rem; max-width:56ch; color:var(--muted); }
 .section--field .section__lede{ color:color-mix(in srgb, var(--field-text) 80%, transparent); }
 
@@ -347,8 +389,7 @@ img{ max-width:100%; display:block; }
   transition:background-color .2s ease, color .2s ease, border-color .2s ease;
 }
 .filters button:hover{ color:var(--heading); border-color:var(--accent); }
-.filters button[aria-pressed="true"]{ background:var(--accent); color:var(--surface); border-color:var(--accent); }
-:root[data-theme="dark"] .filters button[aria-pressed="true"]{ color:#1C1013; }
+.filters button[aria-pressed="true"]{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
 
 .deck-nav{ display:flex; align-items:center; gap:.75rem; }
 .counter{ font-family:var(--mono); font-size:.7rem; letter-spacing:.12em; color:var(--muted); font-variant-numeric:tabular-nums; }
@@ -359,8 +400,7 @@ img{ max-width:100%; display:block; }
   color:var(--heading); font-size:1rem; line-height:1; cursor:pointer;
   transition:background-color .2s ease, color .2s ease, border-color .2s ease;
 }
-.arrows button:hover{ background:var(--accent); color:var(--surface); border-color:var(--accent); }
-:root[data-theme="dark"] .arrows button:hover{ color:#1C1013; }
+.arrows button:hover{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
 .arrows button[disabled]{ opacity:.3; cursor:default; }
 .arrows button[disabled]:hover{ background:var(--surface); color:var(--heading); border-color:var(--rule); }
 
@@ -522,11 +562,10 @@ img{ max-width:100%; display:block; }
 
 .send{
   font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase;
-  background:var(--accent); color:var(--surface); border:1px solid var(--accent);
+  background:var(--accent); color:var(--on-accent); border:1px solid var(--accent);
   padding:.85rem 1.6rem; border-radius:2px; cursor:pointer;
   transition:background-color .2s ease, color .2s ease;
 }
-:root[data-theme="dark"] .send{ color:#1C1013; }
 .send:hover{ background:transparent; color:var(--accent); }
 
 .form-status{
