@@ -49,7 +49,7 @@ Then in the repo's **Settings → Pages**, set the source to the `main` branch, 
 
 ## Check before publishing
 
-The stat rows and the per-project numbers were derived from build records, not typed in by hand. Read them once — `08` projects, `175` pages of notes, `04` languages, and each card's receipts line — and confirm they're accurate before the page is public.
+The three figures in the hero (`07` projects, `04` languages, `02` games) and the numbers on each project card (24 modules, 200 levels, 45 models, 17 models, 7 workflows, 9 systems) were derived from build records rather than typed in by hand. Read them once and confirm they're accurate before the page goes public.
 
 ## Notes
 
