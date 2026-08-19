@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shadi — Builder's Ledger</title>
+<meta name="description" content="Shadi — Roblox game systems, Python tools, and desktop apps, each with the written record behind it.">
+<meta name="theme-color" content="#EDE3D1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%235A1020'/><text x='16' y='23' font-family='Georgia,serif' font-size='19' font-weight='700' fill='%23EDE3D1' text-anchor='middle'>S</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..900,0..100,0..1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   Beige + burgundy, strictly. Burgundy is used as a ground
+   (the Skills field, the footer), not only as an accent.
+   ============================================================ */
+:root{
+  --paper:      #EDE3D1;   /* page ground — warm, papery */
+  --paper-2:    #F7F1E6;   /* raised surfaces: cards, fields */
+  --wine:       #5A1020;   /* deep burgundy — display ink + inverted ground */
+  --wine-2:     #8C1D31;   /* burgundy accent — links, active states */
+  --ink:        #2A1C18;   /* body text, warm near-black */
+  --muted:      #6E5B4C;   /* secondary text, captions */
+  --rule:       rgba(90,16,32,.16);
+  --rule-soft:  rgba(90,16,32,.08);
+  --brass:      #A8763C;   /* separators inside ledger lines */
+
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body:    "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono:    "Space Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --pad-x: clamp(1.25rem, 5vw, 6rem);
+  --gap-rail: clamp(1.25rem, 4vw, 4rem);
+  --maxw: 76rem;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:clamp(1rem, .96rem + .2vw, 1.075rem);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+h1,h2,h3{
+  margin:0; font-family:var(--display); font-weight:600; line-height:1.04;
+  font-variation-settings:"SOFT" 0,"WONK" 1; letter-spacing:-.02em;
+}
+p{ margin:0 0 1rem; }
+p:last-child{ margin-bottom:0; }
+a{ color:var(--wine-2); }
+ul{ margin:0; padding:0; list-style:none; }
+img{ max-width:100%; display:block; }
+
+:focus-visible{ outline:2px solid var(--wine-2); outline-offset:3px; border-radius:2px; }
+
+.skip{
+  position:absolute; left:-999px; top:0; z-index:99;
+  background:var(--wine); color:var(--paper); padding:.7rem 1.1rem;
+  font-family:var(--mono); font-size:.8rem; text-decoration:none;
+}
+.skip:focus{ left:.5rem; top:.5rem; }
+
+.mono{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position:fixed; inset:0 0 auto 0; z-index:50;
+  display:flex; align-items:center; gap:1.5rem;
+  padding:.85rem var(--pad-x);
+  background:rgba(237,227,209,.9);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule-soft);
+  transition:border-color .3s ease;
+}
+.nav[data-scrolled="true"]{ border-bottom-color:var(--rule); }
+
+.nav__mark{
+  display:flex; align-items:center; gap:.6rem;
+  text-decoration:none; color:var(--ink); margin-right:auto;
+}
+.nav__glyph{
+  width:1.9rem; height:1.9rem; flex:none;
+  display:grid; place-items:center;
+  background:var(--wine); color:var(--paper);
+  font-family:var(--display); font-weight:700; font-size:1.05rem;
+  font-variation-settings:"SOFT" 0,"WONK" 1;
+  border-radius:4px;
+}
+.nav__name{ font-family:var(--mono); font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; }
+
+.nav__links{ display:flex; gap:1.4rem; }
+.nav__links a{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted); text-decoration:none; padding:.25rem 0;
+  border-bottom:1px solid transparent; transition:color .2s ease, border-color .2s ease;
+}
+.nav__links a:hover,
+.nav__links a[aria-current="true"]{ color:var(--wine); border-bottom-color:var(--wine-2); }
+
+.status{ display:flex; align-items:center; gap:.5rem; color:var(--muted); }
+.status__dot{
+  width:.5rem; height:.5rem; border-radius:50%; background:var(--wine-2); flex:none;
+  box-shadow:0 0 0 0 rgba(140,29,49,.5); animation:pulse 2.6s ease-out infinite;
+}
+@keyframes pulse{
+  70%{ box-shadow:0 0 0 .5rem rgba(140,29,49,0); }
+  100%{ box-shadow:0 0 0 0 rgba(140,29,49,0); }
+}
+@media (prefers-reduced-motion: reduce){ .status__dot{ animation:none; } }
+
+/* On narrow screens the links become a scrollable strip rather than
+   disappearing — a nav you can't reach is worse than a tight one. */
+@media (max-width: 60rem){
+  .nav{ gap:1rem; }
+  .nav__links{
+    gap:1.1rem; min-width:0; overflow-x:auto;
+    scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .nav__links::-webkit-scrollbar{ display:none; }
+  .nav__links a{ white-space:nowrap; font-size:.66rem; }
+}
+@media (max-width: 40rem){
+  .nav__name{ display:none; }
+  .status span:last-child{ display:none; }
+}
+
+/* ============================================================
+   LAYOUT — the ledger rail
+   Every section is filed under a code, the way the index this
+   content came from files a page under a domain.
+   ============================================================ */
+.wrap{ max-width:var(--maxw); margin-inline:auto; }
+
+.section{ padding-block:clamp(4.5rem, 9vw, 8rem); border-top:1px solid var(--rule-soft); }
+.section--field{ background:var(--wine); color:var(--paper); border-top-color:transparent; }
+
+.grid{
+  display:grid;
+  grid-template-columns:9rem 1fr;
+  gap:var(--gap-rail);
+  padding-inline:var(--pad-x);
+}
+/* Grid children default to min-width:auto, which lets the project deck's
+   flex row push the column wider than the page. Keep the overflow inside
+   the deck where it belongs. */
+.grid > *{ min-width:0; }
+.rail{ position:sticky; top:5.5rem; align-self:start; }
+.rail__code{ display:block; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; color:var(--wine-2); }
+.rail__label{ display:block; margin-top:.35rem; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+.rail__line{ display:block; width:1px; height:3.5rem; margin-top:1rem; background:linear-gradient(var(--rule), transparent); }
+
+.section--field .rail__code{ color:#E9B9A2; }
+.section--field .rail__label{ color:rgba(237,227,209,.65); }
+.section--field .rail__line{ background:linear-gradient(rgba(237,227,209,.35), transparent); }
+
+@media (max-width: 60rem){
+  .grid{ grid-template-columns:1fr; gap:1.75rem; }
+  .rail{ position:static; display:flex; align-items:baseline; gap:.75rem; }
+  .rail__line{ display:none; }
+  .rail__label{ margin-top:0; }
+}
+
+.section__title{ font-size:clamp(2rem, 1.3rem + 2.6vw, 3.4rem); max-width:18ch; color:var(--wine); }
+.section--field .section__title{ color:var(--paper); }
+.section__lede{ margin-top:1rem; max-width:56ch; color:var(--muted); }
+.section--field .section__lede{ color:rgba(237,227,209,.75); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{ padding-top:clamp(7rem, 14vw, 11rem); padding-bottom:clamp(3.5rem, 7vw, 6rem); }
+.hero__grid{
+  display:grid; grid-template-columns:1fr 17rem; gap:clamp(2rem, 5vw, 4.5rem);
+  align-items:end; padding-inline:var(--pad-x);
+}
+.hero__eyebrow{ color:var(--wine-2); display:flex; align-items:center; gap:.75rem; margin:0; }
+.hero__eyebrow::after{ content:""; height:1px; flex:1; background:var(--rule); }
+
+.hero h1{
+  margin-top:1.5rem;
+  font-size:clamp(3.4rem, 1.5rem + 8vw, 8rem);
+  font-weight:700; color:var(--wine); line-height:.9; letter-spacing:-.035em;
+}
+.hero__role{
+  margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--rule);
+  font-family:var(--mono); font-size:clamp(.74rem,.68rem + .3vw,.86rem);
+  letter-spacing:.06em; color:var(--ink);
+}
+.hero__lede{ margin-top:1.5rem; max-width:46ch; font-size:1.1rem; color:var(--muted); }
+
+/* Portrait: drop a photo at assets/portrait.jpg and it replaces the monogram. */
+.hero__portrait{
+  position:relative; aspect-ratio:3/4; border-radius:3px;
+  background:var(--wine) url("assets/portrait.jpg") center/cover no-repeat;
+  box-shadow:0 18px 40px -28px rgba(90,16,32,.75);
+  display:grid; place-items:center; overflow:hidden;
+}
+.hero__monogram{
+  font-family:var(--display); font-weight:700; font-size:6rem; line-height:1;
+  font-variation-settings:"SOFT" 0,"WONK" 1;
+  color:rgba(237,227,209,.16);
+}
+/* Once a real photo loads, the monogram gets out of its way. */
+.hero__portrait[data-photo="true"] .hero__monogram{ display:none; }
+.hero__caption{
+  margin-top:.7rem; color:var(--muted);
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+}
+
+/* Three stats, set as ledger rows rather than big-number cards. */
+.tally{ margin-top:clamp(3rem,6vw,4.5rem); padding-inline:var(--pad-x); }
+.tally__row{
+  display:grid; grid-template-columns:6.5rem 1fr auto; align-items:baseline; gap:1rem;
+  padding:1rem 0; border-top:1px solid var(--rule);
+}
+.tally__row:last-child{ border-bottom:1px solid var(--rule); }
+.tally__n{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.8rem,1.2rem + 1.6vw,2.6rem); color:var(--wine);
+  font-variation-settings:"SOFT" 0,"WONK" 1;
+}
+.tally__label{ font-size:.98rem; }
+.tally__note{
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); text-align:right;
+}
+
+@media (max-width: 52rem){
+  .hero__grid{ grid-template-columns:1fr; align-items:start; }
+  .hero__portrait{ max-width:12rem; aspect-ratio:1/1; }
+  .tally__row{ grid-template-columns:5rem 1fr; }
+  .tally__note{ grid-column:2; text-align:left; }
+}
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.prose{ color:var(--ink); }
+.prose p{ max-width:62ch; }
+
+.stack-heading{ margin-top:2.5rem; color:var(--muted); }
+.stack-list{
+  margin-top:1rem; padding-top:1.5rem; border-top:1px solid var(--rule);
+  display:flex; flex-wrap:wrap; gap:.5rem;
+}
+.stack-list li{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.06em;
+  padding:.4rem .7rem; border:1px solid var(--rule); border-radius:2px;
+  color:var(--ink); background:var(--paper-2);
+}
+
+/* ============================================================
+   PROJECTS — filters + horizontal deck
+   ============================================================ */
+.deck-head{ display:flex; flex-wrap:wrap; align-items:center; gap:1rem; margin-top:2.5rem; }
+.filters{ display:flex; flex-wrap:wrap; gap:.4rem; margin-right:auto; }
+.filters button{
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase;
+  padding:.5rem .85rem; border:1px solid var(--rule); border-radius:2px;
+  background:transparent; color:var(--muted); cursor:pointer;
+  transition:background .2s ease, color .2s ease, border-color .2s ease;
+}
+.filters button:hover{ color:var(--wine); border-color:var(--wine-2); }
+.filters button[aria-pressed="true"]{ background:var(--wine); color:var(--paper); border-color:var(--wine); }
+
+.arrows{ display:flex; gap:.4rem; }
+.arrows button{
+  width:2.4rem; height:2.4rem; display:grid; place-items:center;
+  border:1px solid var(--rule); border-radius:2px; background:var(--paper-2);
+  color:var(--wine); font-size:1rem; line-height:1; cursor:pointer;
+  transition:background .2s ease, color .2s ease;
+}
+.arrows button:hover{ background:var(--wine); color:var(--paper); }
+.arrows button[disabled]{ opacity:.3; cursor:default; }
+.arrows button[disabled]:hover{ background:var(--paper-2); color:var(--wine); }
+
+.deck{
+  margin-top:1.75rem;
+  display:flex; gap:1.25rem;
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  padding-bottom:1.25rem;
+  scrollbar-width:thin; scrollbar-color:var(--rule) transparent;
+}
+.deck::-webkit-scrollbar{ height:6px; }
+.deck::-webkit-scrollbar-thumb{ background:var(--rule); border-radius:3px; }
+
+.card{
+  flex:0 0 auto; width:min(27rem, 84vw); scroll-snap-align:start;
+  display:flex; flex-direction:column;
+  background:var(--paper-2); border:1px solid var(--rule); border-radius:3px;
+  padding:1.5rem 1.5rem 1.35rem;
+  position:relative; overflow:hidden;
+  transition:transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;
+}
+/* display:flex above outranks the UA's [hidden]{display:none}, so filtered
+   cards would stay on screen without this. */
+.card[hidden]{ display:none; }
+
+/* The burgundy edge fills in on hover — the one moving accent. */
+.card::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--wine-2); transform:scaleY(0); transform-origin:top;
+  transition:transform .35s cubic-bezier(.2,.7,.3,1);
+}
+.card:hover{ transform:translateY(-4px); box-shadow:0 18px 34px -26px rgba(90,16,32,.6); }
+.card:hover::before,
+.card:focus-within::before{ transform:scaleY(1); }
+@media (prefers-reduced-motion: reduce){
+  .card,.card::before{ transition:none; }
+  .card:hover{ transform:none; }
+}
+
+.card__top{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; }
+.card__idx{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; color:var(--wine-2); }
+.card__state{ font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); text-align:right; }
+.card h3{ margin-top:.9rem; font-size:1.55rem; color:var(--wine); }
+.card__desc{ margin-top:.75rem; font-size:.95rem; }
+
+/* The signature: every project files its receipts. */
+.receipts{
+  margin-top:1.1rem; padding-top:.85rem; border-top:1px dashed var(--rule);
+  display:flex; flex-wrap:wrap; gap:.35rem .55rem;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.03em; color:var(--muted);
+}
+.receipts li{ display:flex; align-items:center; gap:.55rem; }
+.receipts li:not(:last-child)::after{
+  content:""; width:3px; height:3px; border-radius:50%; background:var(--brass);
+}
+
+.tags{ margin-top:1.1rem; display:flex; flex-wrap:wrap; gap:.35rem; }
+.tags li{
+  font-family:var(--mono); font-size:.65rem; letter-spacing:.08em; text-transform:uppercase;
+  padding:.28rem .5rem; border:1px solid var(--rule); border-radius:2px; color:var(--muted);
+}
+
+.card__spacer{ flex:1; min-height:1.25rem; }
+.card__link{
+  padding-top:1rem; border-top:1px solid var(--rule-soft);
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--wine-2); text-decoration:none;
+  display:inline-flex; align-items:center; gap:.5rem; align-self:flex-start;
+}
+.card__link::after{ content:"\2192"; transition:transform .2s ease; }
+.card__link:hover::after{ transform:translateX(3px); }
+.card__link[aria-disabled="true"]{ color:var(--muted); pointer-events:none; }
+.card__link[aria-disabled="true"]::after{ content:"\00B7\00B7\00B7"; }
+
+/* ============================================================
+   SKILLS — inverted burgundy field
+   ============================================================ */
+.skills{
+  margin-top:2.5rem;
+  display:grid; gap:2.25rem 2.5rem;
+  grid-template-columns:repeat(auto-fit, minmax(14rem, 1fr));
+}
+.skills h3{
+  font-family:var(--mono); font-weight:700; font-size:.72rem;
+  letter-spacing:.16em; text-transform:uppercase; color:#E9B9A2;
+  padding-bottom:.65rem; border-bottom:1px solid rgba(237,227,209,.22);
+  font-variation-settings:normal;
+}
+.skills ul{ margin-top:.85rem; display:grid; gap:.4rem; }
+.skills li{ font-size:.95rem; color:rgba(237,227,209,.9); }
+.skills li span{
+  font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase;
+  color:rgba(237,227,209,.55); margin-left:.4rem;
+}
+
+/* ============================================================
+   EXPERIENCE — timeline, years on the left
+   ============================================================ */
+.timeline{ margin-top:2.5rem; }
+.entry{
+  display:grid; grid-template-columns:9rem 1fr; gap:var(--gap-rail);
+  padding:1.75rem 0; border-top:1px solid var(--rule);
+}
+.entry:last-of-type{ border-bottom:1px solid var(--rule); }
+.entry__years{ font-family:var(--mono); font-size:.74rem; letter-spacing:.1em; color:var(--wine-2); padding-top:.4rem; }
+.entry h3{ font-size:1.4rem; color:var(--wine); }
+.entry__org{ margin-top:.3rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+.entry__body{ margin-top:.85rem; max-width:58ch; font-size:.95rem; }
+
+.langs{
+  margin-top:2rem; display:flex; flex-wrap:wrap; gap:.5rem 1.75rem;
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; color:var(--muted);
+}
+.langs strong{ color:var(--wine); font-weight:700; }
+
+@media (max-width: 46rem){
+  .entry{ grid-template-columns:1fr; gap:.75rem; }
+  .entry__years{ padding-top:0; }
+}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact-cols{
+  margin-top:2.5rem;
+  display:grid; grid-template-columns:1.15fr .85fr;
+  gap:clamp(2rem,5vw,4rem); align-items:start;
+}
+@media (max-width: 52rem){ .contact-cols{ grid-template-columns:1fr; } }
+
+.field{ display:grid; gap:.45rem; margin-bottom:1.1rem; }
+.field label{ font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+.field input,.field textarea{
+  font-family:var(--body); font-size:1rem; color:var(--ink);
+  background:var(--paper-2); border:1px solid var(--rule); border-radius:2px;
+  padding:.75rem .85rem; width:100%;
+  transition:border-color .2s ease, background .2s ease;
+}
+.field input:focus,.field textarea:focus{ border-color:var(--wine-2); background:#FFFBF3; }
+.field textarea{ min-height:8.5rem; resize:vertical; }
+
+.send{
+  font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase;
+  background:var(--wine); color:var(--paper); border:1px solid var(--wine);
+  padding:.85rem 1.6rem; border-radius:2px; cursor:pointer;
+  transition:background .2s ease, color .2s ease;
+}
+.send:hover{ background:transparent; color:var(--wine); }
+
+.form-status{
+  margin-top:.9rem; min-height:1.4rem;
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.03em; color:var(--wine-2);
+}
+
+.contact-aside h3{
+  font-family:var(--mono); font-weight:700; font-size:.72rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
+  font-variation-settings:normal;
+}
+.links{ margin-top:1rem; display:grid; }
+.links a{
+  display:flex; align-items:baseline; justify-content:space-between; gap:1rem;
+  padding:.85rem 0; border-top:1px solid var(--rule);
+  text-decoration:none; color:var(--ink);
+  font-family:var(--mono); font-size:.78rem; letter-spacing:.08em;
+  transition:color .2s ease, padding-left .2s ease;
+}
+.links li:last-child a{ border-bottom:1px solid var(--rule); }
+.links a:hover{ color:var(--wine-2); padding-left:.4rem; }
+.links a span{ font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer{
+  background:var(--wine); color:rgba(237,227,209,.65);
+  padding:2.5rem var(--pad-x);
+  display:flex; flex-wrap:wrap; gap:1rem; align-items:center; justify-content:space-between;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+}
+.footer a{ color:rgba(237,227,209,.9); text-decoration:none; }
+.footer a:hover{ color:#E9B9A2; }
+
+/* ============================================================
+   REVEAL
+   ============================================================ */
+.reveal{
+  opacity:0; transform:translateY(14px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1);
+}
+.reveal.is-in{ opacity:1; transform:none; }
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity:1; transform:none; transition:none; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="nav" id="nav">
+  <a class="nav__mark" href="#top">
+    <span class="nav__glyph" aria-hidden="true">S</span>
+    <span class="nav__name">Shadi</span>
+  </a>
+  <div class="nav__links">
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="status mono">
+    <span class="status__dot" aria-hidden="true"></span>
+    <span>Open to work</span>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- ==================== HERO ==================== -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero__grid">
+      <div>
+        <p class="hero__eyebrow mono">Filed under: things I built</p>
+        <h1>Shadi</h1>
+        <p class="hero__role">Roblox systems &nbsp;·&nbsp; Python tools &nbsp;·&nbsp; Geography undergrad, geospatial track</p>
+        <p class="hero__lede">I build games, tools, and desktop apps — and I keep the written record behind each one, so the next build starts where the last one ended instead of at the beginning.</p>
+      </div>
+      <figure style="margin:0">
+        <div class="hero__portrait" role="img" aria-label="Portrait of Shadi">
+          <span class="hero__monogram" aria-hidden="true">S</span>
+        </div>
+        <figcaption class="hero__caption">Building since 2025</figcaption>
+      </figure>
+    </div>
+
+    <div class="tally">
+      <div class="tally__row reveal">
+        <span class="tally__n">08</span>
+        <span class="tally__label">projects taken end to end</span>
+        <span class="tally__note">games · tools · apps</span>
+      </div>
+      <div class="tally__row reveal">
+        <span class="tally__n">175</span>
+        <span class="tally__label">pages of build notes and decision records</span>
+        <span class="tally__note">written as I go</span>
+      </div>
+      <div class="tally__row reveal">
+        <span class="tally__n">04</span>
+        <span class="tally__label">languages I build in</span>
+        <span class="tally__note">Luau · Python · JS · CSS</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== 01 ABOUT ==================== -->
+<section class="section" id="about">
+  <div class="wrap grid">
+    <div class="rail">
+      <span class="rail__code">01</span>
+      <span class="rail__label">About</span>
+      <span class="rail__line" aria-hidden="true"></span>
+    </div>
+    <div>
+      <h2 class="section__title">I finish things, and I write down why they work.</h2>
+      <div class="prose" style="margin-top:1.25rem">
+        <p>I build games in Roblox Studio, tools in Python, and assets in Blender. What ties them together is the habit underneath: every project keeps a record of what I decided, what broke, and the rule I wrote so it wouldn't break the same way twice.</p>
+        <p>That habit produced two Roblox games taken from an empty baseplate to playable, a desktop app now in the hands of outside testers, and a Python toolchain that reads a live game API and generates search filters from it. The Blender work came out of a training log of 91 logged errors that ended in ten permanent modelling rules.</p>
+        <p>I'm studying geography on a geospatial track, heading toward GIS and Python for spatial data — QGIS, GeoPandas, remote sensing. The programming I already do is the programming that field runs on.</p>
+      </div>
+
+      <p class="mono stack-heading">Working with</p>
+      <ul class="stack-list">
+        <li>Luau</li><li>Roblox Studio</li><li>Python</li><li>JavaScript</li>
+        <li>HTML &amp; CSS</li><li>Blender</li><li>Git</li><li>REST APIs</li>
+        <li>JSON</li><li>Regex</li><li>WebView2</li><li>QGIS</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 02 PROJECTS ==================== -->
+<section class="section" id="projects">
+  <div class="wrap grid">
+    <div class="rail">
+      <span class="rail__code">02</span>
+      <span class="rail__label">Projects</span>
+      <span class="rail__line" aria-hidden="true"></span>
+    </div>
+    <div>
+      <h2 class="section__title">Eight entries, with their receipts.</h2>
+      <p class="section__lede">Each card carries the numbers the project actually earned — sessions run, rules written, errors logged, tiers closed. Filter by what it was built in.</p>
+
+      <div class="deck-head">
+        <div class="filters" role="group" aria-label="Filter projects by technology">
+          <button type="button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" data-filter="roblox" aria-pressed="false">Roblox</button>
+          <button type="button" data-filter="python" aria-pressed="false">Python</button>
+          <button type="button" data-filter="web" aria-pressed="false">Web</button>
+          <button type="button" data-filter="3d" aria-pressed="false">3D</button>
+        </div>
+        <div class="arrows">
+          <button type="button" id="deck-prev" aria-label="Previous project">&#8249;</button>
+          <button type="button" id="deck-next" aria-label="Next project">&#8250;</button>
+        </div>
+      </div>
+
+      <div class="deck" id="deck" tabindex="0" role="region" aria-label="Projects, scroll sideways">
+
+        <article class="card" data-tags="python web">
+          <div class="card__top"><span class="card__idx">01</span><span class="card__state">Shipped to testers · v0.1.3</span></div>
+          <h3>Exile Codex</h3>
+          <p class="card__desc">A desktop app for Path of Exile players: a note-taker where screenshots are first-class content, a searchable vault of saved filters that each say what they do and which box they go in, and a crafting advisor that commits to one craft and walks the sequence with its odds.</p>
+          <ul class="receipts">
+            <li>Python + WebView2</li><li>44 of 44 scoped tiers closed</li><li>208 controls documented in-app</li>
+          </ul>
+          <ul class="tags"><li>Python</li><li>WebView2</li><li>Desktop</li><li>UI design</li></ul>
+          <span class="card__spacer"></span>
+          <a class="card__link" href="#contact">Ask me for a build</a>
+        </article>
+
+        <article class="card" data-tags="python">
+          <div class="card__top"><span class="card__idx">02</span><span class="card__state">Running · maintained</span></div>
+          <h3>PoE toolchain</h3>
+          <p class="card__desc">Twenty-odd Python modules that read a live game trade API and turn it into usable answers: generated search filters, item pricing that reports an honest range instead of a fake exact number, an exact board solver, and a watcher that re-checks every claim against the game every three days.</p>
+          <ul class="receipts">
+            <li>24 modules</li><li>Validated against the live API</li><li>Scheduled patch watcher</li>
+          </ul>
+          <ul class="tags"><li>Python</li><li>REST APIs</li><li>Regex</li><li>Data</li></ul>
+          <span class="card__spacer"></span>
+          <a class="card__link" href="#contact">Ask me about it</a>
+        </article>
+
+        <article class="card" data-tags="roblox">
+          <div class="card__top"><span class="card__idx">03</span><span class="card__state">Built · 21 sessions</span></div>
+          <h3>Anime Tower Defence</h3>
+          <p class="card__desc">A full tower defence game in Roblox: waypoint enemy routing, server-side placement raycasts with a path exclusion zone, a wave manager that scales its pool, a server-authoritative gacha, DataStore-backed inventory with persistent upgrade levels, and a story mode with matchmaking.</p>
+          <ul class="receipts">
+            <li>9 core systems</li><li>Server-authoritative</li><li>21-session retrospective written</li>
+          </ul>
+          <ul class="tags"><li>Roblox</li><li>Luau</li><li>DataStore</li><li>Game design</li></ul>
+          <span class="card__spacer"></span>
+          <a class="card__link" href="#contact">Ask me about it</a>
+        </article>
+
+        <article class="card" data-tags="roblox">
+          <div class="card__top"><span class="card__idx">04</span><span class="card__state">Built · pre-publish</span></div>
+          <h3>Sorting Game</h3>
+          <p class="card__desc">A shelf-sorting puzzle on a fixed 2D camera. Two hundred levels come out of a difficulty generator rather than by hand; items are 45 real 3D models welded onto invisible hitboxes so the physics never had to change; locked slots use a deterministic fill that guarantees the board stays solvable.</p>
+          <ul class="receipts">
+            <li>200 generated levels</li><li>45 item models</li><li>107 standing rules recorded</li>
+          </ul>
+          <ul class="tags"><li>Roblox</li><li>Luau</li><li>Level design</li><li>Economy</li></ul>
+          <span class="card__spacer"></span>
+          <a class="card__link" href="#contact">Ask me about it</a>
+        </article>
+
+        <article class="card" data-tags="python web">
+          <div class="card__top"><span class="card__idx">05</span><span class="card__state">Live · self-updating</span></div>
+          <h3>Jarvis</h3>
+          <p class="card__desc">The knowledge base every other project on this page reports into — 129 topic pages and 46 decision records under git, with hooks that commit each session, a knowledge graph for querying it, and two Python generators that render the whole thing as a browsable skill tree and bookshelf.</p>
+          <ul class="receipts">
+            <li>175 pages</li><li>Git-backed, hook-committed</li><li>2 generators, one shared parser</li>
+          </ul>
+          <ul class="tags"><li>Python</li><li>Tooling</li><li>Git</li><li>Docs</li></ul>
+          <span class="card__spacer"></span>
+          <a class="card__link" href="#contact">Ask me about it</a>
+        </article>
+
+        <article class="card" data-tags="web">
+          <div class="card__top"><span class="card__idx">06</span><span class="card__state">Live · 3 pages</span></div>
+          <h3>Vault sites</h3>
+          <p class="card__desc">Three single-page sites written by hand in HTML and CSS — no framework, no build step: a career planner, a skill-tree map of the knowledge base, and a bookshelf view of it. Design tokens as custom properties, light and dark themes, and every asset inline because the host blocks external requests.</p>
+          <ul class="receipts">
+            <li>Zero dependencies</li><li>Design-token system</li><li>Generated from one index</li>
+          </ul>
+          <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>Design systems</li></ul>
+          <span class="card__spacer"></span>
+          <a class="card__link" href="#contact">Ask me about it</a>
+        </article>
+
+        <article class="card" data-tags="3d roblox">
+          <div class="card__top"><span class="card__idx">07</span><span class="card__state">Documented · in use</span></div>
+          <h3>Blender → Roblox pipeline</h3>
+          <p class="card__desc">A repeatable export route from Blender into Roblox Studio, worked out the hard way across 17 models and 91 logged errors: scale maths, world-axis rotation, flat shading before join, mesh limits, and seven named workflows from static prop to rigged character to LOD.</p>
+          <ul class="receipts">
+            <li>17 models</li><li>91 errors logged</li><li>10 permanent rules</li>
+          </ul>
+          <ul class="tags"><li>Blender</li><li>3D</li><li>Rigging</li><li>Pipeline</li></ul>
+          <span class="card__spacer"></span>
+          <a class="card__link" href="#contact">Ask me about it</a>
+        </article>
+
+        <article class="card" data-tags="roblox">
+          <div class="card__top"><span class="card__idx">08</span><span class="card__state">In design</span></div>
+          <h3>Arena Fighter</h3>
+          <p class="card__desc">A combat framework rather than one game: each fighter is a config module of moves, damage, cooldowns and animation IDs, so the second character is a data task and not a rewrite. Combos run off animation event markers, hitboxes stay on the server, and the full event schema is written before any of it.</p>
+          <ul class="receipts">
+            <li>Data-driven moveset</li><li>Server-authoritative from day one</li><li>Scoped from a prior retrospective</li>
+          </ul>
+          <ul class="tags"><li>Roblox</li><li>Luau</li><li>Combat</li><li>Architecture</li></ul>
+          <span class="card__spacer"></span>
+          <a class="card__link" href="#contact" aria-disabled="true">Work in progress</a>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 03 SKILLS ==================== -->
+<section class="section section--field" id="skills">
+  <div class="wrap grid">
+    <div class="rail">
+      <span class="rail__code">03</span>
+      <span class="rail__label">Skills</span>
+      <span class="rail__line" aria-hidden="true"></span>
+    </div>
+    <div>
+      <h2 class="section__title">What I can be handed on day one.</h2>
+      <p class="section__lede">Listed by what I've actually shipped with. Anything still being learned says so.</p>
+
+      <div class="skills">
+        <div>
+          <h3>Languages</h3>
+          <ul>
+            <li>Luau</li><li>Python</li><li>JavaScript</li><li>HTML &amp; CSS</li><li>SQL <span>basics</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Game development</h3>
+          <ul>
+            <li>Roblox Studio</li><li>Client–server architecture</li><li>RemoteEvent schemas</li>
+            <li>DataStore persistence</li><li>State machines</li><li>Economy &amp; difficulty balance</li>
+          </ul>
+        </div>
+        <div>
+          <h3>3D &amp; assets</h3>
+          <ul>
+            <li>Blender modelling</li><li>UV unwrapping</li><li>Rigging &amp; animation</li>
+            <li>FBX / glTF export</li><li>Polygon budgeting</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Tools &amp; data</h3>
+          <ul>
+            <li>REST API integration</li><li>JSON data pipelines</li><li>Regex</li>
+            <li>Scheduled jobs</li><li>Git &amp; version control</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Web</h3>
+          <ul>
+            <li>Semantic HTML</li><li>CSS design tokens</li><li>Responsive layout</li>
+            <li>Contrast &amp; accessibility</li><li>Static hosting</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Geospatial</h3>
+          <ul>
+            <li>QGIS <span>in progress</span></li>
+            <li>GeoPandas <span>in progress</span></li>
+            <li>Remote sensing <span>in progress</span></li>
+            <li>PostGIS <span>planned</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 04 EXPERIENCE ==================== -->
+<section class="section" id="experience">
+  <div class="wrap grid">
+    <div class="rail">
+      <span class="rail__code">04</span>
+      <span class="rail__label">Record</span>
+      <span class="rail__line" aria-hidden="true"></span>
+    </div>
+    <div>
+      <h2 class="section__title">Experience &amp; education</h2>
+
+      <div class="timeline">
+        <article class="entry">
+          <div class="entry__years">2025 — present</div>
+          <div>
+            <h3>Independent developer</h3>
+            <p class="entry__org">Self-directed · own projects</p>
+            <p class="entry__body">Design, build, and ship my own software: two Roblox games taken from concept to playable, a Python desktop app delivered to outside testers, and a data toolchain running against a live game API. Every project ends with a written retrospective that feeds the next one.</p>
+          </div>
+        </article>
+
+        <article class="entry">
+          <div class="entry__years">2026</div>
+          <div>
+            <h3>Exile Codex — shipped to testers</h3>
+            <p class="entry__org">Python · WebView2 · solo build</p>
+            <p class="entry__body">Took a desktop app from first commit to an installable build in outside hands. Closed every scoped feature tier, ran a security pass over HTML sanitising and archive handling, and rewrote the whole interface copy after testers said the first draft read like a machine wrote it.</p>
+          </div>
+        </article>
+
+        <article class="entry">
+          <div class="entry__years">2025 — 2026</div>
+          <div>
+            <h3>Roblox Studio — self-taught</h3>
+            <p class="entry__org">Luau · client–server systems</p>
+            <p class="entry__body">Learned Luau and Roblox's service architecture by building rather than by tutorial: waves, gacha, inventory persistence, UI, and state machines, with each session's bugs written up as named rules. Forty-plus recorded errors on the first project became the architecture checklist for the next.</p>
+          </div>
+        </article>
+
+        <article class="entry">
+          <div class="entry__years">— 2030</div>
+          <div>
+            <h3>B.Sc. Geography — geospatial track</h3>
+            <p class="entry__org">In progress</p>
+            <p class="entry__body">Working toward GIS and geospatial data analysis, with coursework paired deliberately to the programming side: Python for spatial data, QGIS and ArcGIS Pro, remote sensing, and spatial databases.</p>
+          </div>
+        </article>
+      </div>
+
+      <p class="langs">
+        <span><strong>Arabic</strong> native</span>
+        <span><strong>English</strong> fluent</span>
+        <span><strong>French</strong> basic</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 05 CONTACT ==================== -->
+<section class="section" id="contact">
+  <div class="wrap grid">
+    <div class="rail">
+      <span class="rail__code">05</span>
+      <span class="rail__label">Contact</span>
+      <span class="rail__line" aria-hidden="true"></span>
+    </div>
+    <div>
+      <h2 class="section__title">Tell me what you're building.</h2>
+      <p class="section__lede">Roles, freelance work, or a question about anything on this page — the form reaches me directly.</p>
+
+      <div class="contact-cols">
+        <!--
+          TO MAKE THIS FORM SEND:
+          Create a free endpoint at formspree.io (or formsubmit.co) and paste it into
+          the action below, replacing YOUR_FORM_ID. Your address stays with the form
+          service and never appears in the page source.
+          Until then the form stays inert and says so, instead of failing silently.
+        -->
+        <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+          <button class="send" type="submit">Send message</button>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="contact-aside">
+          <h3>Elsewhere</h3>
+          <ul class="links">
+            <li><a href="https://github.com/shadiossamamain-rgb">GitHub <span>Code</span></a></li>
+            <!-- The email address is assembled by JS at runtime, so it never
+                 appears in the page source for scrapers to harvest. -->
+            <li><a id="mail-link" href="#contact">Email me <span>Direct</span></a></li>
+            <!--
+              TO ADD LINKEDIN: uncomment and replace YOUR_HANDLE.
+              <li><a href="https://linkedin.com/in/YOUR_HANDLE">LinkedIn <span>Profile</span></a></li>
+
+              TO ADD A CV: drop the PDF at assets/CV.pdf and uncomment.
+              <li><a href="assets/CV.pdf">Download CV <span>PDF</span></a></li>
+            -->
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <span>&copy; <span id="year">2026</span> Shadi</span>
+  <span>Built by hand — no framework, no build step</span>
+  <a href="#top">Back to top &#8593;</a>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  /* ---- contact: build the mailto at runtime so the address is not
+          sitting in the page source for scrapers ---- */
+  var mailLink = document.getElementById("mail-link");
+  var mailUser = "ossashadi.main";
+  var mailHost = "gmail.com";
+  mailLink.setAttribute("href", "mailto:" + mailUser + "@" + mailHost);
+
+  /* ---- hero: swap the monogram out if a real photo exists ---- */
+  var portrait = document.querySelector(".hero__portrait");
+  var probe = new Image();
+  probe.onload = function () { portrait.setAttribute("data-photo", "true"); };
+  probe.src = "assets/portrait.jpg";
+
+  /* ---- nav: hairline appears once you leave the hero ---- */
+  var nav = document.getElementById("nav");
+  function onScroll() { nav.setAttribute("data-scrolled", String(window.scrollY > 24)); }
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  /* ---- nav: mark the section being read ---- */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav__links a"));
+  var sections = navLinks
+    .map(function (a) { return document.querySelector(a.getAttribute("href")); })
+    .filter(Boolean);
+
+  if ("IntersectionObserver" in window && sections.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) { return; }
+        navLinks.forEach(function (a) {
+          a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + e.target.id));
+        });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    sections.forEach(function (s) { spy.observe(s); });
+  }
+
+  /* ---- reveal on scroll ---- */
+  var reveals = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+  if (reduced || !("IntersectionObserver" in window)) {
+    reveals.forEach(function (el) { el.classList.add("is-in"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.2 });
+    reveals.forEach(function (el, i) {
+      el.style.transitionDelay = (i * 90) + "ms";
+      io.observe(el);
+    });
+  }
+
+  /* ---- projects: filter + scroll ---- */
+  var deck = document.getElementById("deck");
+  var cards = Array.prototype.slice.call(deck.querySelectorAll(".card"));
+  var filterBtns = Array.prototype.slice.call(document.querySelectorAll(".filters button"));
+  var prev = document.getElementById("deck-prev");
+  var next = document.getElementById("deck-next");
+
+  function step() {
+    var first = cards.filter(function (c) { return !c.hidden; })[0];
+    if (!first) { return deck.clientWidth; }
+    var gap = parseFloat(getComputedStyle(deck).columnGap) || 20;
+    return first.getBoundingClientRect().width + gap;
+  }
+
+  function syncArrows() {
+    var max = deck.scrollWidth - deck.clientWidth - 2;
+    prev.disabled = deck.scrollLeft <= 2;
+    next.disabled = deck.scrollLeft >= max;
+  }
+
+  prev.addEventListener("click", function () {
+    deck.scrollBy({ left: -step(), behavior: reduced ? "auto" : "smooth" });
+  });
+  next.addEventListener("click", function () {
+    deck.scrollBy({ left: step(), behavior: reduced ? "auto" : "smooth" });
+  });
+  deck.addEventListener("scroll", syncArrows, { passive: true });
+  window.addEventListener("resize", syncArrows);
+  syncArrows();
+
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var want = btn.getAttribute("data-filter");
+      filterBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+      cards.forEach(function (c) {
+        var tags = (c.getAttribute("data-tags") || "").split(" ");
+        c.hidden = !(want === "all" || tags.indexOf(want) !== -1);
+      });
+      deck.scrollTo({ left: 0, behavior: reduced ? "auto" : "smooth" });
+      window.setTimeout(syncArrows, reduced ? 0 : 400);
+    });
+  });
+
+  /* ---- contact form: never fail silently ---- */
+  var form = document.getElementById("contact-form");
+  var status = document.getElementById("form-status");
+
+  form.addEventListener("submit", function (ev) {
+    if (form.getAttribute("action").indexOf("YOUR_FORM_ID") !== -1) {
+      ev.preventDefault();
+      status.textContent = "The form isn't connected yet — use the Email me link instead.";
+      return;
+    }
+    if (!form.checkValidity()) {
+      ev.preventDefault();
+      status.textContent = "Add your name, a valid email, and a message.";
+      return;
+    }
+    status.textContent = "Sending…";
+  });
+})();
+</script>
+</body>
+</html>
