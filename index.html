@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shadi — Builder's Ledger</title>
-<meta name="description" content="Shadi — Roblox game systems, Python tools, and desktop apps, each with the written record behind it.">
+<title>Shadi — Portfolio</title>
+<meta name="description" content="Shadi — developer working in Roblox Studio, Python, and Blender. Games, desktop tools, and 3D assets.">
 <meta name="theme-color" content="#EDE3D1">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%235A1020'/><text x='16' y='23' font-family='Georgia,serif' font-size='19' font-weight='700' fill='%23EDE3D1' text-anchor='middle'>S</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,19 +13,19 @@
 <style>
 /* ============================================================
    TOKENS
-   Beige + burgundy, strictly. Burgundy is used as a ground
-   (the Skills field, the footer), not only as an accent.
+   Beige and burgundy. Burgundy is used as a ground (the Skills
+   section, the footer), not only as an accent colour.
    ============================================================ */
 :root{
-  --paper:      #EDE3D1;   /* page ground — warm, papery */
-  --paper-2:    #F7F1E6;   /* raised surfaces: cards, fields */
-  --wine:       #5A1020;   /* deep burgundy — display ink + inverted ground */
-  --wine-2:     #8C1D31;   /* burgundy accent — links, active states */
-  --ink:        #2A1C18;   /* body text, warm near-black */
-  --muted:      #6E5B4C;   /* secondary text, captions */
+  --paper:      #EDE3D1;   /* page ground */
+  --paper-2:    #F7F1E6;   /* raised surfaces: cards, form fields */
+  --wine:       #5A1020;   /* headings, and the inverted section ground */
+  --wine-2:     #8C1D31;   /* links and active states */
+  --ink:        #2A1C18;   /* body text */
+  --muted:      #6E5B4C;   /* secondary text */
   --rule:       rgba(90,16,32,.16);
   --rule-soft:  rgba(90,16,32,.08);
-  --brass:      #A8763C;   /* separators inside ledger lines */
+  --brass:      #A8763C;   /* separators in the project meta line */
 
   --display: "Fraunces", Georgia, "Times New Roman", serif;
   --body:    "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -120,8 +120,7 @@ img{ max-width:100%; display:block; }
 }
 @media (prefers-reduced-motion: reduce){ .status__dot{ animation:none; } }
 
-/* On narrow screens the links become a scrollable strip rather than
-   disappearing — a nav you can't reach is worse than a tight one. */
+/* On narrow screens the links scroll rather than disappear. */
 @media (max-width: 60rem){
   .nav{ gap:1rem; }
   .nav__links{
@@ -137,9 +136,7 @@ img{ max-width:100%; display:block; }
 }
 
 /* ============================================================
-   LAYOUT — the ledger rail
-   Every section is filed under a code, the way the index this
-   content came from files a page under a domain.
+   LAYOUT
    ============================================================ */
 .wrap{ max-width:var(--maxw); margin-inline:auto; }
 
@@ -148,31 +145,27 @@ img{ max-width:100%; display:block; }
 
 .grid{
   display:grid;
-  grid-template-columns:9rem 1fr;
+  grid-template-columns:6rem 1fr;
   gap:var(--gap-rail);
   padding-inline:var(--pad-x);
 }
-/* Grid children default to min-width:auto, which lets the project deck's
-   flex row push the column wider than the page. Keep the overflow inside
-   the deck where it belongs. */
+/* Grid children default to min-width:auto, which would let the project
+   deck's flex row push the whole page wider than the viewport. */
 .grid > *{ min-width:0; }
+
 .rail{ position:sticky; top:5.5rem; align-self:start; }
 .rail__code{ display:block; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; color:var(--wine-2); }
-.rail__label{ display:block; margin-top:.35rem; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
 .rail__line{ display:block; width:1px; height:3.5rem; margin-top:1rem; background:linear-gradient(var(--rule), transparent); }
-
 .section--field .rail__code{ color:#E9B9A2; }
-.section--field .rail__label{ color:rgba(237,227,209,.65); }
 .section--field .rail__line{ background:linear-gradient(rgba(237,227,209,.35), transparent); }
 
 @media (max-width: 60rem){
-  .grid{ grid-template-columns:1fr; gap:1.75rem; }
-  .rail{ position:static; display:flex; align-items:baseline; gap:.75rem; }
+  .grid{ grid-template-columns:1fr; gap:1.5rem; }
+  .rail{ position:static; }
   .rail__line{ display:none; }
-  .rail__label{ margin-top:0; }
 }
 
-.section__title{ font-size:clamp(2rem, 1.3rem + 2.6vw, 3.4rem); max-width:18ch; color:var(--wine); }
+.section__title{ font-size:clamp(2rem, 1.3rem + 2.6vw, 3.2rem); color:var(--wine); }
 .section--field .section__title{ color:var(--paper); }
 .section__lede{ margin-top:1rem; max-width:56ch; color:var(--muted); }
 .section--field .section__lede{ color:rgba(237,227,209,.75); }
@@ -181,48 +174,26 @@ img{ max-width:100%; display:block; }
    HERO
    ============================================================ */
 .hero{ padding-top:clamp(7rem, 14vw, 11rem); padding-bottom:clamp(3.5rem, 7vw, 6rem); }
-.hero__grid{
-  display:grid; grid-template-columns:1fr 17rem; gap:clamp(2rem, 5vw, 4.5rem);
-  align-items:end; padding-inline:var(--pad-x);
-}
+.hero__inner{ padding-inline:var(--pad-x); }
 .hero__eyebrow{ color:var(--wine-2); display:flex; align-items:center; gap:.75rem; margin:0; }
-.hero__eyebrow::after{ content:""; height:1px; flex:1; background:var(--rule); }
+.hero__eyebrow::after{ content:""; height:1px; flex:1; background:var(--rule); max-width:22rem; }
 
 .hero h1{
   margin-top:1.5rem;
-  font-size:clamp(3.4rem, 1.5rem + 8vw, 8rem);
+  font-size:clamp(3.4rem, 1.5rem + 8vw, 7.5rem);
   font-weight:700; color:var(--wine); line-height:.9; letter-spacing:-.035em;
 }
 .hero__role{
   margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--rule);
+  max-width:52rem;
   font-family:var(--mono); font-size:clamp(.74rem,.68rem + .3vw,.86rem);
   letter-spacing:.06em; color:var(--ink);
 }
-.hero__lede{ margin-top:1.5rem; max-width:46ch; font-size:1.1rem; color:var(--muted); }
+.hero__lede{ margin-top:1.5rem; max-width:56ch; font-size:1.1rem; color:var(--muted); }
 
-/* Portrait: drop a photo at assets/portrait.jpg and it replaces the monogram. */
-.hero__portrait{
-  position:relative; aspect-ratio:3/4; border-radius:3px;
-  background:var(--wine) url("assets/portrait.jpg") center/cover no-repeat;
-  box-shadow:0 18px 40px -28px rgba(90,16,32,.75);
-  display:grid; place-items:center; overflow:hidden;
-}
-.hero__monogram{
-  font-family:var(--display); font-weight:700; font-size:6rem; line-height:1;
-  font-variation-settings:"SOFT" 0,"WONK" 1;
-  color:rgba(237,227,209,.16);
-}
-/* Once a real photo loads, the monogram gets out of its way. */
-.hero__portrait[data-photo="true"] .hero__monogram{ display:none; }
-.hero__caption{
-  margin-top:.7rem; color:var(--muted);
-  font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
-}
-
-/* Three stats, set as ledger rows rather than big-number cards. */
 .tally{ margin-top:clamp(3rem,6vw,4.5rem); padding-inline:var(--pad-x); }
 .tally__row{
-  display:grid; grid-template-columns:6.5rem 1fr auto; align-items:baseline; gap:1rem;
+  display:grid; grid-template-columns:6.5rem 1fr; align-items:baseline; gap:1rem;
   padding:1rem 0; border-top:1px solid var(--rule);
 }
 .tally__row:last-child{ border-bottom:1px solid var(--rule); }
@@ -232,22 +203,10 @@ img{ max-width:100%; display:block; }
   font-variation-settings:"SOFT" 0,"WONK" 1;
 }
 .tally__label{ font-size:.98rem; }
-.tally__note{
-  font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); text-align:right;
-}
-
-@media (max-width: 52rem){
-  .hero__grid{ grid-template-columns:1fr; align-items:start; }
-  .hero__portrait{ max-width:12rem; aspect-ratio:1/1; }
-  .tally__row{ grid-template-columns:5rem 1fr; }
-  .tally__note{ grid-column:2; text-align:left; }
-}
 
 /* ============================================================
    ABOUT
    ============================================================ */
-.prose{ color:var(--ink); }
 .prose p{ max-width:62ch; }
 
 .stack-heading{ margin-top:2.5rem; color:var(--muted); }
@@ -262,7 +221,7 @@ img{ max-width:100%; display:block; }
 }
 
 /* ============================================================
-   PROJECTS — filters + horizontal deck
+   PROJECTS
    ============================================================ */
 .deck-head{ display:flex; flex-wrap:wrap; align-items:center; gap:1rem; margin-top:2.5rem; }
 .filters{ display:flex; flex-wrap:wrap; gap:.4rem; margin-right:auto; }
@@ -304,11 +263,10 @@ img{ max-width:100%; display:block; }
   position:relative; overflow:hidden;
   transition:transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;
 }
-/* display:flex above outranks the UA's [hidden]{display:none}, so filtered
-   cards would stay on screen without this. */
+/* display:flex above outranks the UA's [hidden]{display:none}, so the
+   filter would leave cards on screen without this. */
 .card[hidden]{ display:none; }
 
-/* The burgundy edge fills in on hover — the one moving accent. */
 .card::before{
   content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
   background:var(--wine-2); transform:scaleY(0); transform-origin:top;
@@ -325,17 +283,16 @@ img{ max-width:100%; display:block; }
 .card__top{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; }
 .card__idx{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; color:var(--wine-2); }
 .card__state{ font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); text-align:right; }
-.card h3{ margin-top:.9rem; font-size:1.55rem; color:var(--wine); }
+.card h3{ margin-top:.9rem; font-size:1.5rem; color:var(--wine); }
 .card__desc{ margin-top:.75rem; font-size:.95rem; }
 
-/* The signature: every project files its receipts. */
-.receipts{
+.meta{
   margin-top:1.1rem; padding-top:.85rem; border-top:1px dashed var(--rule);
   display:flex; flex-wrap:wrap; gap:.35rem .55rem;
   font-family:var(--mono); font-size:.68rem; letter-spacing:.03em; color:var(--muted);
 }
-.receipts li{ display:flex; align-items:center; gap:.55rem; }
-.receipts li:not(:last-child)::after{
+.meta li{ display:flex; align-items:center; gap:.55rem; }
+.meta li:not(:last-child)::after{
   content:""; width:3px; height:3px; border-radius:50%; background:var(--brass);
 }
 
@@ -345,20 +302,8 @@ img{ max-width:100%; display:block; }
   padding:.28rem .5rem; border:1px solid var(--rule); border-radius:2px; color:var(--muted);
 }
 
-.card__spacer{ flex:1; min-height:1.25rem; }
-.card__link{
-  padding-top:1rem; border-top:1px solid var(--rule-soft);
-  font-family:var(--mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--wine-2); text-decoration:none;
-  display:inline-flex; align-items:center; gap:.5rem; align-self:flex-start;
-}
-.card__link::after{ content:"\2192"; transition:transform .2s ease; }
-.card__link:hover::after{ transform:translateX(3px); }
-.card__link[aria-disabled="true"]{ color:var(--muted); pointer-events:none; }
-.card__link[aria-disabled="true"]::after{ content:"\00B7\00B7\00B7"; }
-
 /* ============================================================
-   SKILLS — inverted burgundy field
+   SKILLS
    ============================================================ */
 .skills{
   margin-top:2.5rem;
@@ -379,7 +324,7 @@ img{ max-width:100%; display:block; }
 }
 
 /* ============================================================
-   EXPERIENCE — timeline, years on the left
+   EXPERIENCE
    ============================================================ */
 .timeline{ margin-top:2.5rem; }
 .entry{
@@ -388,7 +333,7 @@ img{ max-width:100%; display:block; }
 }
 .entry:last-of-type{ border-bottom:1px solid var(--rule); }
 .entry__years{ font-family:var(--mono); font-size:.74rem; letter-spacing:.1em; color:var(--wine-2); padding-top:.4rem; }
-.entry h3{ font-size:1.4rem; color:var(--wine); }
+.entry h3{ font-size:1.35rem; color:var(--wine); }
 .entry__org{ margin-top:.3rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
 .entry__body{ margin-top:.85rem; max-width:58ch; font-size:.95rem; }
 
@@ -506,36 +451,25 @@ img{ max-width:100%; display:block; }
 <!-- ==================== HERO ==================== -->
 <header class="hero" id="top">
   <div class="wrap">
-    <div class="hero__grid">
-      <div>
-        <p class="hero__eyebrow mono">Filed under: things I built</p>
-        <h1>Shadi</h1>
-        <p class="hero__role">Roblox systems &nbsp;·&nbsp; Python tools &nbsp;·&nbsp; Geography undergrad, geospatial track</p>
-        <p class="hero__lede">I build games, tools, and desktop apps — and I keep the written record behind each one, so the next build starts where the last one ended instead of at the beginning.</p>
-      </div>
-      <figure style="margin:0">
-        <div class="hero__portrait" role="img" aria-label="Portrait of Shadi">
-          <span class="hero__monogram" aria-hidden="true">S</span>
-        </div>
-        <figcaption class="hero__caption">Building since 2025</figcaption>
-      </figure>
+    <div class="hero__inner">
+      <p class="hero__eyebrow mono">Portfolio</p>
+      <h1>Shadi</h1>
+      <p class="hero__role">Developer &nbsp;·&nbsp; Roblox &amp; Python &nbsp;·&nbsp; Geography undergraduate, geospatial track</p>
+      <p class="hero__lede">I build games, desktop tools, and 3D assets. Most of my work is in Roblox Studio with Luau and in Python, covering gameplay systems, data persistence, API integration, and interface design.</p>
     </div>
 
     <div class="tally">
       <div class="tally__row reveal">
-        <span class="tally__n">08</span>
-        <span class="tally__label">projects taken end to end</span>
-        <span class="tally__note">games · tools · apps</span>
-      </div>
-      <div class="tally__row reveal">
-        <span class="tally__n">175</span>
-        <span class="tally__label">pages of build notes and decision records</span>
-        <span class="tally__note">written as I go</span>
+        <span class="tally__n">07</span>
+        <span class="tally__label">Projects built</span>
       </div>
       <div class="tally__row reveal">
         <span class="tally__n">04</span>
-        <span class="tally__label">languages I build in</span>
-        <span class="tally__note">Luau · Python · JS · CSS</span>
+        <span class="tally__label">Programming languages</span>
+      </div>
+      <div class="tally__row reveal">
+        <span class="tally__n">02</span>
+        <span class="tally__label">Complete games built in Roblox</span>
       </div>
     </div>
   </div>
@@ -546,22 +480,21 @@ img{ max-width:100%; display:block; }
   <div class="wrap grid">
     <div class="rail">
       <span class="rail__code">01</span>
-      <span class="rail__label">About</span>
       <span class="rail__line" aria-hidden="true"></span>
     </div>
     <div>
-      <h2 class="section__title">I finish things, and I write down why they work.</h2>
+      <h2 class="section__title">About</h2>
       <div class="prose" style="margin-top:1.25rem">
-        <p>I build games in Roblox Studio, tools in Python, and assets in Blender. What ties them together is the habit underneath: every project keeps a record of what I decided, what broke, and the rule I wrote so it wouldn't break the same way twice.</p>
-        <p>That habit produced two Roblox games taken from an empty baseplate to playable, a desktop app now in the hands of outside testers, and a Python toolchain that reads a live game API and generates search filters from it. The Blender work came out of a training log of 91 logged errors that ended in ten permanent modelling rules.</p>
-        <p>I'm studying geography on a geospatial track, heading toward GIS and Python for spatial data — QGIS, GeoPandas, remote sensing. The programming I already do is the programming that field runs on.</p>
+        <p>I am a self-taught developer working mainly in Luau and Python. Over the past two years I have built two complete Roblox games, a Python desktop application currently in testing with external users, and a set of Python tools that integrate with a live game API.</p>
+        <p>My work covers gameplay systems, client–server architecture, data persistence, and interface design. I also model, rig, and export 3D assets in Blender for use in Roblox.</p>
+        <p>I am studying geography with a focus on geospatial analysis, working toward a role in GIS and spatial data. I am building the technical side alongside my coursework, primarily QGIS, GeoPandas, and remote sensing.</p>
       </div>
 
-      <p class="mono stack-heading">Working with</p>
+      <p class="mono stack-heading">Technologies</p>
       <ul class="stack-list">
         <li>Luau</li><li>Roblox Studio</li><li>Python</li><li>JavaScript</li>
         <li>HTML &amp; CSS</li><li>Blender</li><li>Git</li><li>REST APIs</li>
-        <li>JSON</li><li>Regex</li><li>WebView2</li><li>QGIS</li>
+        <li>JSON</li><li>Regular expressions</li><li>WebView2</li><li>QGIS</li>
       </ul>
     </div>
   </div>
@@ -572,12 +505,11 @@ img{ max-width:100%; display:block; }
   <div class="wrap grid">
     <div class="rail">
       <span class="rail__code">02</span>
-      <span class="rail__label">Projects</span>
       <span class="rail__line" aria-hidden="true"></span>
     </div>
     <div>
-      <h2 class="section__title">Eight entries, with their receipts.</h2>
-      <p class="section__lede">Each card carries the numbers the project actually earned — sessions run, rules written, errors logged, tiers closed. Filter by what it was built in.</p>
+      <h2 class="section__title">Selected work</h2>
+      <p class="section__lede">Seven projects across game development, desktop applications, data tools, and 3D. Filter by technology.</p>
 
       <div class="deck-head">
         <div class="filters" role="group" aria-label="Filter projects by technology">
@@ -593,102 +525,76 @@ img{ max-width:100%; display:block; }
         </div>
       </div>
 
-      <div class="deck" id="deck" tabindex="0" role="region" aria-label="Projects, scroll sideways">
+      <div class="deck" id="deck" tabindex="0" role="region" aria-label="Projects, scroll horizontally">
 
-        <article class="card" data-tags="python web">
-          <div class="card__top"><span class="card__idx">01</span><span class="card__state">Shipped to testers · v0.1.3</span></div>
+        <article class="card" data-tags="python">
+          <div class="card__top"><span class="card__idx">01</span><span class="card__state">In testing</span></div>
           <h3>Exile Codex</h3>
-          <p class="card__desc">A desktop app for Path of Exile players: a note-taker where screenshots are first-class content, a searchable vault of saved filters that each say what they do and which box they go in, and a crafting advisor that commits to one craft and walks the sequence with its odds.</p>
-          <ul class="receipts">
-            <li>Python + WebView2</li><li>44 of 44 scoped tiers closed</li><li>208 controls documented in-app</li>
+          <p class="card__desc">A desktop application for Path of Exile players. It combines a note-taking system with screenshot support, a searchable library of saved search filters, and a crafting advisor that recommends a single method and shows the probability of each step. Built in Python with a WebView2 interface and released to external testers.</p>
+          <ul class="meta">
+            <li>Python</li><li>WebView2</li><li>Solo build</li>
           </ul>
-          <ul class="tags"><li>Python</li><li>WebView2</li><li>Desktop</li><li>UI design</li></ul>
-          <span class="card__spacer"></span>
-          <a class="card__link" href="#contact">Ask me for a build</a>
+          <ul class="tags"><li>Python</li><li>Desktop</li><li>UI design</li></ul>
         </article>
 
         <article class="card" data-tags="python">
-          <div class="card__top"><span class="card__idx">02</span><span class="card__state">Running · maintained</span></div>
-          <h3>PoE toolchain</h3>
-          <p class="card__desc">Twenty-odd Python modules that read a live game trade API and turn it into usable answers: generated search filters, item pricing that reports an honest range instead of a fake exact number, an exact board solver, and a watcher that re-checks every claim against the game every three days.</p>
-          <ul class="receipts">
-            <li>24 modules</li><li>Validated against the live API</li><li>Scheduled patch watcher</li>
+          <div class="card__top"><span class="card__idx">02</span><span class="card__state">Maintained</span></div>
+          <h3>Path of Exile toolchain</h3>
+          <p class="card__desc">A set of Python modules that read the game's live trade API and turn the results into usable output: generated search filters, item price ranges derived from real listings, an exact solver for an in-game optimisation puzzle, and a scheduled job that re-validates the data after each patch.</p>
+          <ul class="meta">
+            <li>Python</li><li>REST API</li><li>24 modules</li>
           </ul>
-          <ul class="tags"><li>Python</li><li>REST APIs</li><li>Regex</li><li>Data</li></ul>
-          <span class="card__spacer"></span>
-          <a class="card__link" href="#contact">Ask me about it</a>
+          <ul class="tags"><li>Python</li><li>APIs</li><li>Data</li></ul>
         </article>
 
         <article class="card" data-tags="roblox">
-          <div class="card__top"><span class="card__idx">03</span><span class="card__state">Built · 21 sessions</span></div>
+          <div class="card__top"><span class="card__idx">03</span><span class="card__state">Complete</span></div>
           <h3>Anime Tower Defence</h3>
-          <p class="card__desc">A full tower defence game in Roblox: waypoint enemy routing, server-side placement raycasts with a path exclusion zone, a wave manager that scales its pool, a server-authoritative gacha, DataStore-backed inventory with persistent upgrade levels, and a story mode with matchmaking.</p>
-          <ul class="receipts">
-            <li>9 core systems</li><li>Server-authoritative</li><li>21-session retrospective written</li>
+          <p class="card__desc">A complete tower defence game built in Roblox Studio. Includes waypoint-based enemy movement, server-validated tower placement, a wave manager with scaling difficulty, a server-authoritative gacha system, DataStore-backed inventory with persistent upgrades, and a story mode with matchmaking.</p>
+          <ul class="meta">
+            <li>Roblox</li><li>Luau</li><li>9 systems</li>
           </ul>
-          <ul class="tags"><li>Roblox</li><li>Luau</li><li>DataStore</li><li>Game design</li></ul>
-          <span class="card__spacer"></span>
-          <a class="card__link" href="#contact">Ask me about it</a>
+          <ul class="tags"><li>Roblox</li><li>Luau</li><li>DataStore</li></ul>
         </article>
 
         <article class="card" data-tags="roblox">
-          <div class="card__top"><span class="card__idx">04</span><span class="card__state">Built · pre-publish</span></div>
+          <div class="card__top"><span class="card__idx">04</span><span class="card__state">Complete</span></div>
           <h3>Sorting Game</h3>
-          <p class="card__desc">A shelf-sorting puzzle on a fixed 2D camera. Two hundred levels come out of a difficulty generator rather than by hand; items are 45 real 3D models welded onto invisible hitboxes so the physics never had to change; locked slots use a deterministic fill that guarantees the board stays solvable.</p>
-          <ul class="receipts">
-            <li>200 generated levels</li><li>45 item models</li><li>107 standing rules recorded</li>
+          <p class="card__desc">A shelf-sorting puzzle game with a fixed 2D camera. Its 200 levels are produced by a difficulty generator rather than authored by hand. Items use 45 3D models attached to invisible hitboxes, and locked slots are filled by a deterministic algorithm that guarantees every board stays solvable.</p>
+          <ul class="meta">
+            <li>Roblox</li><li>200 levels</li><li>45 models</li>
           </ul>
-          <ul class="tags"><li>Roblox</li><li>Luau</li><li>Level design</li><li>Economy</li></ul>
-          <span class="card__spacer"></span>
-          <a class="card__link" href="#contact">Ask me about it</a>
-        </article>
-
-        <article class="card" data-tags="python web">
-          <div class="card__top"><span class="card__idx">05</span><span class="card__state">Live · self-updating</span></div>
-          <h3>Jarvis</h3>
-          <p class="card__desc">The knowledge base every other project on this page reports into — 129 topic pages and 46 decision records under git, with hooks that commit each session, a knowledge graph for querying it, and two Python generators that render the whole thing as a browsable skill tree and bookshelf.</p>
-          <ul class="receipts">
-            <li>175 pages</li><li>Git-backed, hook-committed</li><li>2 generators, one shared parser</li>
-          </ul>
-          <ul class="tags"><li>Python</li><li>Tooling</li><li>Git</li><li>Docs</li></ul>
-          <span class="card__spacer"></span>
-          <a class="card__link" href="#contact">Ask me about it</a>
+          <ul class="tags"><li>Roblox</li><li>Luau</li><li>Level design</li></ul>
         </article>
 
         <article class="card" data-tags="web">
-          <div class="card__top"><span class="card__idx">06</span><span class="card__state">Live · 3 pages</span></div>
-          <h3>Vault sites</h3>
-          <p class="card__desc">Three single-page sites written by hand in HTML and CSS — no framework, no build step: a career planner, a skill-tree map of the knowledge base, and a bookshelf view of it. Design tokens as custom properties, light and dark themes, and every asset inline because the host blocks external requests.</p>
-          <ul class="receipts">
-            <li>Zero dependencies</li><li>Design-token system</li><li>Generated from one index</li>
+          <div class="card__top"><span class="card__idx">05</span><span class="card__state">Live</span></div>
+          <h3>Web projects</h3>
+          <p class="card__desc">Three single-page sites written by hand in HTML, CSS, and JavaScript, with no framework and no build step: a career planning tool and two interactive data visualisations. Each is built on a design system of CSS custom properties with light and dark themes.</p>
+          <ul class="meta">
+            <li>HTML</li><li>CSS</li><li>JavaScript</li>
           </ul>
-          <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>Design systems</li></ul>
-          <span class="card__spacer"></span>
-          <a class="card__link" href="#contact">Ask me about it</a>
+          <ul class="tags"><li>Web</li><li>Design systems</li><li>Accessibility</li></ul>
         </article>
 
         <article class="card" data-tags="3d roblox">
-          <div class="card__top"><span class="card__idx">07</span><span class="card__state">Documented · in use</span></div>
-          <h3>Blender → Roblox pipeline</h3>
-          <p class="card__desc">A repeatable export route from Blender into Roblox Studio, worked out the hard way across 17 models and 91 logged errors: scale maths, world-axis rotation, flat shading before join, mesh limits, and seven named workflows from static prop to rigged character to LOD.</p>
-          <ul class="receipts">
-            <li>17 models</li><li>91 errors logged</li><li>10 permanent rules</li>
+          <div class="card__top"><span class="card__idx">06</span><span class="card__state">In use</span></div>
+          <h3>Blender to Roblox pipeline</h3>
+          <p class="card__desc">A documented workflow for exporting 3D models from Blender into Roblox Studio, covering scale conversion, rotation handling, shading order, and mesh limits. Developed across 17 models, with seven defined workflows ranging from static props to rigged characters and LOD meshes.</p>
+          <ul class="meta">
+            <li>Blender</li><li>17 models</li><li>7 workflows</li>
           </ul>
-          <ul class="tags"><li>Blender</li><li>3D</li><li>Rigging</li><li>Pipeline</li></ul>
-          <span class="card__spacer"></span>
-          <a class="card__link" href="#contact">Ask me about it</a>
+          <ul class="tags"><li>Blender</li><li>3D</li><li>Rigging</li></ul>
         </article>
 
         <article class="card" data-tags="roblox">
-          <div class="card__top"><span class="card__idx">08</span><span class="card__state">In design</span></div>
+          <div class="card__top"><span class="card__idx">07</span><span class="card__state">In development</span></div>
           <h3>Arena Fighter</h3>
-          <p class="card__desc">A combat framework rather than one game: each fighter is a config module of moves, damage, cooldowns and animation IDs, so the second character is a data task and not a rewrite. Combos run off animation event markers, hitboxes stay on the server, and the full event schema is written before any of it.</p>
-          <ul class="receipts">
-            <li>Data-driven moveset</li><li>Server-authoritative from day one</li><li>Scoped from a prior retrospective</li>
+          <p class="card__desc">A combat framework in development. Each character is defined by a configuration module holding moves, damage values, cooldowns, and animation references, so additional characters can be added as data rather than new code. Combos are driven by animation event markers, and all hit detection runs on the server.</p>
+          <ul class="meta">
+            <li>Roblox</li><li>Luau</li><li>Data-driven</li>
           </ul>
-          <ul class="tags"><li>Roblox</li><li>Luau</li><li>Combat</li><li>Architecture</li></ul>
-          <span class="card__spacer"></span>
-          <a class="card__link" href="#contact" aria-disabled="true">Work in progress</a>
+          <ul class="tags"><li>Roblox</li><li>Luau</li><li>Architecture</li></ul>
         </article>
 
       </div>
@@ -701,54 +607,53 @@ img{ max-width:100%; display:block; }
   <div class="wrap grid">
     <div class="rail">
       <span class="rail__code">03</span>
-      <span class="rail__label">Skills</span>
       <span class="rail__line" aria-hidden="true"></span>
     </div>
     <div>
-      <h2 class="section__title">What I can be handed on day one.</h2>
-      <p class="section__lede">Listed by what I've actually shipped with. Anything still being learned says so.</p>
+      <h2 class="section__title">Skills</h2>
+      <p class="section__lede">Grouped by area. Skills still in development are marked.</p>
 
       <div class="skills">
         <div>
           <h3>Languages</h3>
           <ul>
-            <li>Luau</li><li>Python</li><li>JavaScript</li><li>HTML &amp; CSS</li><li>SQL <span>basics</span></li>
+            <li>Luau</li><li>Python</li><li>JavaScript</li><li>HTML &amp; CSS</li><li>SQL <span>basic</span></li>
           </ul>
         </div>
         <div>
           <h3>Game development</h3>
           <ul>
-            <li>Roblox Studio</li><li>Client–server architecture</li><li>RemoteEvent schemas</li>
-            <li>DataStore persistence</li><li>State machines</li><li>Economy &amp; difficulty balance</li>
+            <li>Roblox Studio</li><li>Client–server architecture</li><li>RemoteEvent design</li>
+            <li>DataStore persistence</li><li>State machines</li><li>Game economy balancing</li>
           </ul>
         </div>
         <div>
-          <h3>3D &amp; assets</h3>
+          <h3>3D and assets</h3>
           <ul>
-            <li>Blender modelling</li><li>UV unwrapping</li><li>Rigging &amp; animation</li>
-            <li>FBX / glTF export</li><li>Polygon budgeting</li>
+            <li>Blender modelling</li><li>UV unwrapping</li><li>Rigging and animation</li>
+            <li>FBX and glTF export</li><li>Polygon budgeting</li>
           </ul>
         </div>
         <div>
-          <h3>Tools &amp; data</h3>
+          <h3>Tools and data</h3>
           <ul>
-            <li>REST API integration</li><li>JSON data pipelines</li><li>Regex</li>
-            <li>Scheduled jobs</li><li>Git &amp; version control</li>
+            <li>REST API integration</li><li>JSON data pipelines</li><li>Regular expressions</li>
+            <li>Scheduled tasks</li><li>Git and version control</li>
           </ul>
         </div>
         <div>
           <h3>Web</h3>
           <ul>
-            <li>Semantic HTML</li><li>CSS design tokens</li><li>Responsive layout</li>
-            <li>Contrast &amp; accessibility</li><li>Static hosting</li>
+            <li>Semantic HTML</li><li>CSS design systems</li><li>Responsive layout</li>
+            <li>Accessibility and contrast</li><li>Static hosting</li>
           </ul>
         </div>
         <div>
           <h3>Geospatial</h3>
           <ul>
-            <li>QGIS <span>in progress</span></li>
-            <li>GeoPandas <span>in progress</span></li>
-            <li>Remote sensing <span>in progress</span></li>
+            <li>QGIS <span>learning</span></li>
+            <li>GeoPandas <span>learning</span></li>
+            <li>Remote sensing <span>learning</span></li>
             <li>PostGIS <span>planned</span></li>
           </ul>
         </div>
@@ -762,7 +667,6 @@ img{ max-width:100%; display:block; }
   <div class="wrap grid">
     <div class="rail">
       <span class="rail__code">04</span>
-      <span class="rail__label">Record</span>
       <span class="rail__line" aria-hidden="true"></span>
     </div>
     <div>
@@ -773,43 +677,43 @@ img{ max-width:100%; display:block; }
           <div class="entry__years">2025 — present</div>
           <div>
             <h3>Independent developer</h3>
-            <p class="entry__org">Self-directed · own projects</p>
-            <p class="entry__body">Design, build, and ship my own software: two Roblox games taken from concept to playable, a Python desktop app delivered to outside testers, and a data toolchain running against a live game API. Every project ends with a written retrospective that feeds the next one.</p>
+            <p class="entry__org">Self-directed projects</p>
+            <p class="entry__body">Design and build my own software end to end: two complete Roblox games, a Python desktop application released to external testers, and a data toolchain running against a live API. Responsible for architecture, implementation, testing, and interface design.</p>
           </div>
         </article>
 
         <article class="entry">
           <div class="entry__years">2026</div>
           <div>
-            <h3>Exile Codex — shipped to testers</h3>
-            <p class="entry__org">Python · WebView2 · solo build</p>
-            <p class="entry__body">Took a desktop app from first commit to an installable build in outside hands. Closed every scoped feature tier, ran a security pass over HTML sanitising and archive handling, and rewrote the whole interface copy after testers said the first draft read like a machine wrote it.</p>
+            <h3>Exile Codex</h3>
+            <p class="entry__org">Python · WebView2</p>
+            <p class="entry__body">Built and released a desktop application to external testers. Completed all planned features, carried out a security review covering HTML sanitisation and archive handling, and revised the full interface copy following tester feedback.</p>
           </div>
         </article>
 
         <article class="entry">
           <div class="entry__years">2025 — 2026</div>
           <div>
-            <h3>Roblox Studio — self-taught</h3>
-            <p class="entry__org">Luau · client–server systems</p>
-            <p class="entry__body">Learned Luau and Roblox's service architecture by building rather than by tutorial: waves, gacha, inventory persistence, UI, and state machines, with each session's bugs written up as named rules. Forty-plus recorded errors on the first project became the architecture checklist for the next.</p>
+            <h3>Roblox development</h3>
+            <p class="entry__org">Luau · Client–server systems</p>
+            <p class="entry__body">Learned Luau and the Roblox service architecture by building rather than by tutorial, covering wave systems, randomised reward systems, inventory persistence, user interface, and state machines across two full projects.</p>
           </div>
         </article>
 
         <article class="entry">
           <div class="entry__years">— 2030</div>
           <div>
-            <h3>B.Sc. Geography — geospatial track</h3>
+            <h3>BSc Geography, geospatial track</h3>
             <p class="entry__org">In progress</p>
-            <p class="entry__body">Working toward GIS and geospatial data analysis, with coursework paired deliberately to the programming side: Python for spatial data, QGIS and ArcGIS Pro, remote sensing, and spatial databases.</p>
+            <p class="entry__body">Working toward GIS and geospatial data analysis, with coursework paired to the technical side: Python for spatial data, QGIS and ArcGIS Pro, remote sensing, and spatial databases.</p>
           </div>
         </article>
       </div>
 
       <p class="langs">
-        <span><strong>Arabic</strong> native</span>
-        <span><strong>English</strong> fluent</span>
-        <span><strong>French</strong> basic</span>
+        <span><strong>Arabic</strong> Native</span>
+        <span><strong>English</strong> Fluent</span>
+        <span><strong>French</strong> Basic</span>
       </p>
     </div>
   </div>
@@ -820,19 +724,17 @@ img{ max-width:100%; display:block; }
   <div class="wrap grid">
     <div class="rail">
       <span class="rail__code">05</span>
-      <span class="rail__label">Contact</span>
       <span class="rail__line" aria-hidden="true"></span>
     </div>
     <div>
-      <h2 class="section__title">Tell me what you're building.</h2>
-      <p class="section__lede">Roles, freelance work, or a question about anything on this page — the form reaches me directly.</p>
+      <h2 class="section__title">Contact</h2>
+      <p class="section__lede">Available for roles and freelance work. Use the form below or email me directly.</p>
 
       <div class="contact-cols">
         <!--
           TO MAKE THIS FORM SEND:
           Create a free endpoint at formspree.io (or formsubmit.co) and paste it into
-          the action below, replacing YOUR_FORM_ID. Your address stays with the form
-          service and never appears in the page source.
+          the action below, replacing YOUR_FORM_ID.
           Until then the form stays inert and says so, instead of failing silently.
         -->
         <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
@@ -853,18 +755,18 @@ img{ max-width:100%; display:block; }
         </form>
 
         <aside class="contact-aside">
-          <h3>Elsewhere</h3>
+          <h3>Links</h3>
           <ul class="links">
             <li><a href="https://github.com/shadiossamamain-rgb">GitHub <span>Code</span></a></li>
-            <!-- The email address is assembled by JS at runtime, so it never
-                 appears in the page source for scrapers to harvest. -->
-            <li><a id="mail-link" href="#contact">Email me <span>Direct</span></a></li>
+            <!-- The address is assembled by JavaScript at runtime so it does not
+                 appear in the page source. -->
+            <li><a id="mail-link" href="#contact">Email <span>Direct</span></a></li>
             <!--
               TO ADD LINKEDIN: uncomment and replace YOUR_HANDLE.
               <li><a href="https://linkedin.com/in/YOUR_HANDLE">LinkedIn <span>Profile</span></a></li>
 
               TO ADD A CV: drop the PDF at assets/CV.pdf and uncomment.
-              <li><a href="assets/CV.pdf">Download CV <span>PDF</span></a></li>
+              <li><a href="assets/CV.pdf">CV <span>PDF</span></a></li>
             -->
           </ul>
         </aside>
@@ -877,7 +779,7 @@ img{ max-width:100%; display:block; }
 
 <footer class="footer">
   <span>&copy; <span id="year">2026</span> Shadi</span>
-  <span>Built by hand — no framework, no build step</span>
+  <span>Built with HTML, CSS and JavaScript</span>
   <a href="#top">Back to top &#8593;</a>
 </footer>
 
@@ -888,18 +790,12 @@ img{ max-width:100%; display:block; }
 
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  /* ---- contact: build the mailto at runtime so the address is not
-          sitting in the page source for scrapers ---- */
+  /* ---- contact: build the mailto at runtime so the address is not in
+          the page source ---- */
   var mailLink = document.getElementById("mail-link");
   var mailUser = "ossashadi.main";
   var mailHost = "gmail.com";
   mailLink.setAttribute("href", "mailto:" + mailUser + "@" + mailHost);
-
-  /* ---- hero: swap the monogram out if a real photo exists ---- */
-  var portrait = document.querySelector(".hero__portrait");
-  var probe = new Image();
-  probe.onload = function () { portrait.setAttribute("data-photo", "true"); };
-  probe.src = "assets/portrait.jpg";
 
   /* ---- nav: hairline appears once you leave the hero ---- */
   var nav = document.getElementById("nav");
@@ -941,7 +837,7 @@ img{ max-width:100%; display:block; }
     });
   }
 
-  /* ---- projects: filter + scroll ---- */
+  /* ---- projects: filter and scroll ---- */
   var deck = document.getElementById("deck");
   var cards = Array.prototype.slice.call(deck.querySelectorAll(".card"));
   var filterBtns = Array.prototype.slice.call(document.querySelectorAll(".filters button"));
@@ -991,12 +887,12 @@ img{ max-width:100%; display:block; }
   form.addEventListener("submit", function (ev) {
     if (form.getAttribute("action").indexOf("YOUR_FORM_ID") !== -1) {
       ev.preventDefault();
-      status.textContent = "The form isn't connected yet — use the Email me link instead.";
+      status.textContent = "The form is not connected yet. Please use the email link.";
       return;
     }
     if (!form.checkValidity()) {
       ev.preventDefault();
-      status.textContent = "Add your name, a valid email, and a message.";
+      status.textContent = "Please add your name, a valid email, and a message.";
       return;
     }
     status.textContent = "Sending…";
