@@ -12,8 +12,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..900,0..100,0..1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <script>
-/* Set the theme before first paint so the page never flashes the wrong one. */
+/* Set the theme before first paint so the page never flashes the wrong one,
+   and mark that scripting is available.
+
+   The `js` class is load-bearing: the entrance and scroll-reveal animations
+   start from opacity:0, so they are only ever applied when JavaScript is
+   confirmed running. Without it every revealed element would be permanently
+   invisible if a script failed, a CSP blocked it, or the page were embedded
+   in a sandboxed frame. Content must never depend on JS to be readable. */
 (function () {
+  document.documentElement.className += " js";
   try {
     var saved = localStorage.getItem("theme");
     var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -158,6 +166,7 @@ img{ max-width:100%; display:block; }
 .nav__mark{
   display:flex; align-items:center; gap:.6rem;
   text-decoration:none; color:var(--text); margin-right:auto;
+  padding-block:.35rem; /* keeps the tap target above 40px on phones */
 }
 .nav__glyph{
   width:1.9rem; height:1.9rem; flex:none;
@@ -296,13 +305,15 @@ img{ max-width:100%; display:block; }
 }
 .tally__label{ font-size:.98rem; }
 
-/* Entrance: one orchestrated sequence on load, not scattered effects. */
+/* Entrance: one orchestrated sequence on load, not scattered effects.
+   Scoped to .js — see the head script. Without scripting these elements
+   simply render, rather than sitting at opacity:0 forever. */
 @media (prefers-reduced-motion: no-preference){
-  .enter{ opacity:0; transform:translateY(18px); animation:enter .9s cubic-bezier(.2,.7,.3,1) forwards; }
-  .enter:nth-child(1){ animation-delay:.05s; }
-  .enter:nth-child(2){ animation-delay:.15s; }
-  .enter:nth-child(3){ animation-delay:.25s; }
-  .enter:nth-child(4){ animation-delay:.35s; }
+  .js .enter{ opacity:0; transform:translateY(18px); animation:enter .9s cubic-bezier(.2,.7,.3,1) forwards; }
+  .js .enter:nth-child(1){ animation-delay:.05s; }
+  .js .enter:nth-child(2){ animation-delay:.15s; }
+  .js .enter:nth-child(3){ animation-delay:.25s; }
+  .js .enter:nth-child(4){ animation-delay:.35s; }
 }
 @keyframes enter{ to{ opacity:1; transform:none; } }
 
@@ -465,10 +476,12 @@ img{ max-width:100%; display:block; }
 .entry::before{
   content:""; position:absolute; left:0; top:-3.5px; width:7px; height:7px;
   border-radius:50%; background:var(--accent);
-  transform:scale(0); transition:transform .5s cubic-bezier(.2,.7,.3,1);
 }
-.entry.is-in::before{ transform:scale(1); }
-@media (prefers-reduced-motion: reduce){ .entry::before{ transform:scale(1); transition:none; } }
+.js .entry::before{ transform:scale(0); transition:transform .5s cubic-bezier(.2,.7,.3,1); }
+.js .entry.is-in::before{ transform:scale(1); }
+@media (prefers-reduced-motion: reduce){
+  .js .entry::before{ transform:scale(1); transition:none; }
+}
 
 .entry__years{ font-family:var(--mono); font-size:.74rem; letter-spacing:.1em; color:var(--accent); padding-top:.4rem; }
 .entry h3{ font-size:1.35rem; }
@@ -548,19 +561,24 @@ img{ max-width:100%; display:block; }
   font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
   transition:background-color .35s ease, color .35s ease;
 }
-.footer a{ color:var(--field-text); text-decoration:none; }
+.footer a{
+  color:var(--field-text); text-decoration:none;
+  display:inline-block; padding-block:.6rem; /* tap target */
+}
 .footer a:hover{ color:var(--field-head); }
 
 /* ============================================================
    REVEAL
    ============================================================ */
-.reveal{
+/* Scoped to .js so that without scripting the content is simply visible.
+   A reveal that never fires must fail open, never blank. */
+.js .reveal{
   opacity:0; transform:translateY(16px);
   transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1);
 }
-.reveal.is-in{ opacity:1; transform:none; }
+.js .reveal.is-in{ opacity:1; transform:none; }
 @media (prefers-reduced-motion: reduce){
-  .reveal{ opacity:1; transform:none; transition:none; }
+  .js .reveal{ opacity:1; transform:none; transition:none; }
 }
 </style>
 </head>
