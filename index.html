@@ -72,6 +72,7 @@
 
   --pad-x: clamp(1.25rem, 5vw, 6rem);
   --gap-rail: clamp(1.25rem, 4vw, 4rem);
+  --rail-w: 6rem;
   --maxw: 76rem;
 }
 
@@ -312,7 +313,7 @@ img{ max-width:100%; display:block; }
 
 .grid{
   display:grid;
-  grid-template-columns:6rem 1fr;
+  grid-template-columns:var(--rail-w) 1fr;
   gap:var(--gap-rail);
   padding-inline:var(--pad-x);
 }
@@ -342,6 +343,15 @@ img{ max-width:100%; display:block; }
    ============================================================ */
 .hero{ padding-top:clamp(7rem, 14vw, 11rem); padding-bottom:clamp(3.5rem, 7vw, 6rem); }
 .hero__inner{ padding-inline:var(--pad-x); }
+.tally{ margin-top:clamp(3rem,6vw,4.5rem); padding-inline:var(--pad-x); }
+
+/* Above the stacking breakpoint the sections indent past the rail column.
+   The hero has no rail number, but its text must still line up with theirs,
+   otherwise the page has two different left edges. */
+@media (min-width: 60.0625rem){
+  .hero__inner,
+  .tally{ padding-left:calc(var(--pad-x) + var(--rail-w) + var(--gap-rail)); }
+}
 .hero__eyebrow{ color:var(--accent); display:flex; align-items:center; gap:.75rem; margin:0; }
 .hero__eyebrow::after{ content:""; height:1px; flex:1; background:var(--rule); max-width:22rem; }
 
@@ -359,7 +369,6 @@ img{ max-width:100%; display:block; }
 }
 .hero__lede{ margin-top:1.5rem; max-width:56ch; font-size:1.1rem; color:var(--muted); }
 
-.tally{ margin-top:clamp(3rem,6vw,4.5rem); padding-inline:var(--pad-x); }
 .tally__row{
   display:grid; grid-template-columns:6.5rem 1fr; align-items:baseline; gap:1rem;
   padding:1rem 0; border-top:1px solid var(--rule);
