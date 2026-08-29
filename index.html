@@ -66,7 +66,6 @@
   --grain-blend: multiply;
   --cat-fur:     #5A1020;
   --cat-eye:     #D9A441;
-  --cat-pupil:   #2A1C18;
   --bloom-a:     rgba(140,29,49,.13);
   --bloom-b:     rgba(168,118,60,.11);
 
@@ -108,7 +107,6 @@
   --grain-blend: screen;
   --cat-fur:     #573F45;   /* still a dark cat, just lifted off the ground */
   --cat-eye:     #E8B75C;
-  --cat-pupil:   #24181C;
   --bloom-a:     rgba(227,146,127,.13);
   --bloom-b:     rgba(200,155,98,.09);
 }
@@ -144,7 +142,6 @@
     --grain-blend: screen;
     --cat-fur:     #573F45;
     --cat-eye:     #E8B75C;
-    --cat-pupil:   #24181C;
     --bloom-a:     rgba(227,146,127,.13);
     --bloom-b:     rgba(200,155,98,.09);
   }
@@ -266,13 +263,9 @@ body::before{
   74%        { transform:rotate(6deg); }
   82%        { transform:rotate(-3deg); }
 }
-/* Pupils are moved from script; the transition is what makes the look
-   glide rather than snap. */
-.cat__pupil{ transition:transform .45s cubic-bezier(.2,.7,.3,1); }
 
 @media (prefers-reduced-motion: reduce){
   .cat__body,.cat__eyes,.cat__tail{ animation:none; }
-  .cat__pupil{ transition:none; }
 }
 @media (max-width: 44rem){ .cat{ right:.9rem; bottom:.9rem; width:46px; } }
 
@@ -473,7 +466,7 @@ body::before{
    ============================================================ */
 .hero{ padding-top:clamp(7rem, 14vw, 11rem); padding-bottom:clamp(3.5rem, 7vw, 6rem); }
 .hero__inner{ padding-inline:var(--pad-x); }
-.tally{ margin-top:clamp(3rem,6vw,4.5rem); padding-inline:var(--pad-x); }
+.tally{ margin-top:clamp(2.5rem,5vw,3.5rem); padding-inline:var(--pad-x); }
 
 /* Above the stacking breakpoint the sections indent past the rail column.
    The hero has no rail number, but its text must still line up with theirs,
@@ -487,8 +480,8 @@ body::before{
 
 .hero h1{
   margin-top:1.5rem;
-  font-size:clamp(3.4rem, 1.5rem + 8vw, 7.5rem);
-  font-weight:700; line-height:.9; letter-spacing:-.035em;
+  font-size:clamp(2.5rem, 1.4rem + 4.4vw, 4.75rem);
+  font-weight:700; line-height:1; letter-spacing:-.03em;
   color:var(--heading);
 }
 .hero__role{
@@ -497,19 +490,33 @@ body::before{
   font-family:var(--mono); font-size:clamp(.74rem,.68rem + .3vw,.86rem);
   letter-spacing:.06em; color:var(--text);
 }
-.hero__lede{ margin-top:1.5rem; max-width:56ch; font-size:1.1rem; color:var(--muted); }
+.hero__name{ color:var(--accent); }
+.hero__lede{ margin-top:1.5rem; max-width:56ch; font-size:1.06rem; color:var(--muted); }
 
-.tally__row{
-  display:grid; grid-template-columns:6.5rem 1fr; align-items:baseline; gap:1rem;
-  padding:1rem 0; border-top:1px solid var(--rule);
-}
-.tally__row:last-child{ border-bottom:1px solid var(--rule); }
+.tally{ display:flex; flex-wrap:wrap; gap:clamp(1.75rem, 5vw, 4rem); }
+.tally__row{ display:block; }
 .tally__n{
-  font-family:var(--display); font-weight:700;
-  font-size:clamp(1.8rem,1.2rem + 1.6vw,2.6rem); color:var(--heading);
+  display:block; font-family:var(--display); font-weight:700; line-height:1;
+  font-size:clamp(1.9rem,1.3rem + 1.4vw,2.5rem); color:var(--heading);
   font-variation-settings:"SOFT" 0,"WONK" 1;
 }
-.tally__label{ font-size:.98rem; }
+.tally__label{
+  display:block; margin-top:.35rem;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted);
+}
+
+/* Buttons: one solid, one quiet, so there is a clear first move. */
+.hero__cta{ margin-top:2rem; display:flex; flex-wrap:wrap; gap:.75rem; }
+.btn{
+  font-family:var(--mono); font-size:.74rem; letter-spacing:.12em; text-transform:uppercase;
+  padding:.8rem 1.4rem; border:1px solid var(--rule); border-radius:2px;
+  color:var(--heading); text-decoration:none;
+  transition:background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.btn:hover{ border-color:var(--accent); color:var(--accent); }
+.btn--solid{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+.btn--solid:hover{ background:transparent; color:var(--accent); }
 
 /* Entrance: one orchestrated sequence on load, not scattered effects.
    Scoped to .js — see the head script. Without scripting these elements
@@ -783,10 +790,6 @@ body::before{
      visitors see: it previews a status and hands you the one line to commit. -->
 <div class="cat" id="cat" aria-hidden="true">
   <svg viewBox="0 0 14 18" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <clipPath id="eyeL"><rect x="2" y="4" width="3" height="2"/></clipPath>
-      <clipPath id="eyeR"><rect x="7" y="4" width="3" height="2"/></clipPath>
-    </defs>
     <g class="cat__body" fill="currentColor">
       <!-- small triangular ears -->
       <rect x="3" y="0" width="1" height="1"/><rect x="9" y="0" width="1" height="1"/>
@@ -821,17 +824,13 @@ body::before{
       <rect x="13" y="11" width="1" height="1"/>
       <rect x="12" y="10" width="1" height="1"/>
     </g>
-    <!-- Eyes kept small and set low on the head. Two earlier versions failed
-         here: a big bright iris with a pinprick pupil read as a stare, and a
-         gold ring around a fur-coloured pupil read as an empty frame. Solid
-         gold with one dark pupil is what the reference art actually does. -->
-    <g class="cat__eyes">
-      <g fill="var(--cat-eye)">
-        <rect x="2" y="4" width="3" height="2"/>
-        <rect x="7" y="4" width="3" height="2"/>
-      </g>
-      <g clip-path="url(#eyeL)"><rect class="cat__pupil" x="3" y="4" width="1" height="2" fill="var(--cat-pupil)"/></g>
-      <g clip-path="url(#eyeR)"><rect class="cat__pupil" x="8" y="4" width="1" height="2" fill="var(--cat-pupil)"/></g>
+    <!-- Two solid eyes, nothing else. Four earlier versions tried iris +
+         pupil (+ glint) and all of them read as stripes: at this display size
+         each grid unit is under 4px, so a 3x3 eye cannot carry three colours.
+         The reference art that reads cleanest does exactly this. -->
+    <g class="cat__eyes" fill="var(--cat-eye)">
+      <rect x="3" y="4" width="2" height="2"/>
+      <rect x="7" y="4" width="2" height="2"/>
     </g>
   </svg>
 </div>
@@ -882,9 +881,13 @@ body::before{
   <div class="wrap">
     <div class="hero__inner">
       <p class="hero__eyebrow mono enter">Portfolio</p>
-      <h1 class="enter">Shadi</h1>
+      <h1 class="enter">Hi, I'm <span class="hero__name">Shadi</span>.</h1>
       <p class="hero__role enter">Developer &nbsp;·&nbsp; Roblox &amp; Python &nbsp;·&nbsp; Geography undergraduate, geospatial track</p>
-      <p class="hero__lede enter">Two Roblox games taken from an empty baseplate to playable. A Python desktop app in the hands of outside testers. A toolchain that reads a live game API and answers real questions with it. I work mainly in Luau and Python.</p>
+      <p class="hero__lede enter">I build games, desktop software and 3D assets, mostly in Luau and Python. Two Roblox games from empty baseplate to playable, and a desktop app now in the hands of outside testers.</p>
+      <div class="hero__cta enter">
+        <a class="btn btn--solid" href="#projects">View projects</a>
+        <a class="btn" href="#contact">Contact me</a>
+      </div>
     </div>
 
     <div class="tally">
@@ -938,7 +941,7 @@ body::before{
     </div>
     <div>
       <h2 class="section__title reveal">Selected work</h2>
-      <p class="section__lede reveal">Seven builds across games, desktop software, data tooling and 3D. Each card says what it does and what it was built with.</p>
+      <p class="section__lede reveal">Games, desktop software, data tooling and 3D.</p>
 
       <div class="deck-head reveal">
         <div class="filters" role="group" aria-label="Filter projects by technology">
@@ -1029,7 +1032,7 @@ body::before{
     </div>
     <div>
       <h2 class="section__title reveal">Skills</h2>
-      <p class="section__lede reveal">What I can be given on day one. Anything I'm still learning says so rather than sitting in the same list unmarked.</p>
+      <p class="section__lede reveal">What I work with, and what I'm still learning.</p>
 
       <div class="skills">
         <div class="reveal">
@@ -1145,7 +1148,7 @@ body::before{
     </div>
     <div>
       <h2 class="section__title reveal">Contact</h2>
-      <p class="section__lede reveal">Open to roles and freelance work. The form reaches me directly, or email me at the address below.</p>
+      <p class="section__lede reveal">Open to roles and freelance work.</p>
 
       <div class="contact-cols reveal">
         <!--
@@ -1406,35 +1409,6 @@ body::before{
       var next = order[(order.indexOf(nav.getAttribute("data-status")) + 1) % order.length];
       paint(next);
     });
-  })();
-
-  /* ---- the cat watches the cursor ----
-     Pupils travel less than a pixel-unit inside the iris, which is the whole
-     trick: any more and the eyes read as googly rather than attentive. With
-     no pointer (touch, or before the first move) they stay centred. */
-  (function () {
-    var pupils = document.querySelectorAll(".cat__pupil");
-    var cat = document.getElementById("cat");
-    if (!pupils.length || !cat || reduced) { return; }
-    var pending = false, mx = 0, my = 0;
-
-    function track() {
-      pending = false;
-      var b = cat.getBoundingClientRect();
-      if (!b.width) { return; }
-      var cx = b.left + b.width / 2, cy = b.top + b.height * 0.35;
-      var dx = mx - cx, dy = my - cy;
-      var d = Math.sqrt(dx * dx + dy * dy) || 1;
-      var reach = Math.max(window.innerWidth, window.innerHeight) * 0.35;
-      var pull = Math.min(1, d / reach);
-      var t = "translate(" + ((dx / d) * pull * 0.75).toFixed(2) + "px," +
-                             ((dy / d) * pull * 0.25).toFixed(2) + "px)";
-      for (var i = 0; i < pupils.length; i++) { pupils[i].style.transform = t; }
-    }
-    window.addEventListener("pointermove", function (e) {
-      mx = e.clientX; my = e.clientY;
-      if (!pending) { pending = true; requestAnimationFrame(track); }
-    }, { passive: true });
   })();
 
   /* ---- the cat steps aside for the footer ---- */
