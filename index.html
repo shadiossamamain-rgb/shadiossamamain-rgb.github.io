@@ -275,12 +275,6 @@ body::before{
 @keyframes tailA{ 0%,71.9%{ opacity:1 } 72%,100%{ opacity:0 } }
 @keyframes tailB{ 0%,71.9%{ opacity:0 } 72%,79.9%{ opacity:1 } 80%,87.9%{ opacity:0 } 88%,95.9%{ opacity:1 } 96%,100%{ opacity:0 } }
 @keyframes tailC{ 0%,79.9%{ opacity:0 } 80%,87.9%{ opacity:1 } 88%,100%{ opacity:0 } }
-@keyframes sway{
-  0%,55%,100%{ transform:rotate(0deg); }
-  68%        { transform:rotate(-7deg); }
-  80%        { transform:rotate(5deg); }
-  90%        { transform:rotate(-2deg); }
-}
 /* Pupils are moved from script; the transition is what makes the glance
    glide instead of snapping. */
 .cat__pupil{ transition:transform .4s cubic-bezier(.2,.7,.3,1); }
