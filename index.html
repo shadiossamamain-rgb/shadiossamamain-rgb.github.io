@@ -42,6 +42,7 @@
   color-scheme: light;
 
   --bg:          #EDE3D1;   /* page ground */
+  --bg-alt:      #F2EADC;   /* alternating band, one warm step apart */
   --surface:     #F7F1E6;   /* cards, form fields */
   --surface-2:   #FFFBF3;   /* focused fields */
   --heading:     #5A1020;   /* display type */
@@ -60,12 +61,11 @@
   --glyph-bg:    #5A1020;   /* the S mark */
   --title-on-field: #EDE3D1;
 
-  --shadow-card: 0 18px 34px -26px rgba(90,16,32,.6);
+  --shadow-card: 0 1px 2px rgba(60,40,20,.05), 0 12px 28px -20px rgba(60,40,20,.3);
   --grain-op:    .045;
   --grain-blend: multiply;
   --bloom-a:     rgba(140,29,49,.13);
   --bloom-b:     rgba(168,118,60,.11);
-  --grid-line:   rgba(90,16,32,.055);
 
   --display: "Fraunces", Georgia, "Times New Roman", serif;
   --body:    "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -81,6 +81,7 @@
   color-scheme: dark;
 
   --bg:          #1C1013;
+  --bg-alt:      #22161A;
   --surface:     #261619;
   --surface-2:   #2E1B1F;
   --heading:     #F0E2CC;
@@ -99,12 +100,11 @@
   --glyph-bg:    #E3927F;
   --title-on-field: #F0E2CC;
 
-  --shadow-card: 0 18px 34px -24px rgba(0,0,0,.8);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.6);
   --grain-op:    .05;
   --grain-blend: screen;
   --bloom-a:     rgba(227,146,127,.13);
   --bloom-b:     rgba(200,155,98,.09);
-  --grid-line:   rgba(237,224,204,.05);
 }
 
 /* No-JS / system default. The head script stamps data-theme before first
@@ -114,6 +114,7 @@
     color-scheme: dark;
 
     --bg:          #1C1013;
+    --bg-alt:      #22161A;
     --surface:     #261619;
     --surface-2:   #2E1B1F;
     --heading:     #F0E2CC;
@@ -132,12 +133,11 @@
     --glyph-bg:    #E3927F;
     --title-on-field: #F0E2CC;
 
-    --shadow-card: 0 18px 34px -24px rgba(0,0,0,.8);
+    --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.6);
     --grain-op:    .05;
     --grain-blend: screen;
     --bloom-a:     rgba(227,146,127,.13);
     --bloom-b:     rgba(200,155,98,.09);
-    --grid-line:   rgba(237,224,204,.05);
   }
 }
 
@@ -188,44 +188,27 @@ img{ max-width:100%; display:block; }
 .mono{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; }
 
 /* ============================================================
-   BACKDROP
-   Three soft blooms behind everything, warming the corners so the
-   page reads as a lit surface rather than a flat fill. CSS only —
-   no canvas, no script, nothing to go wrong.
+   SURFACE
+   Researched 2026-08-19. Award-winning portfolios read as
+   designed through restraint — whitespace, typography and
+   surface hierarchy — not through a pattern behind the content.
+   Three pattern attempts (contour rings, compass needles,
+   drifting blooms) were each rejected as noise, because a
+   pattern competes with the work it is meant to support.
 
-   z-index:-1 keeps it above the body background and beneath all
-   content; a fixed element at z-index 0 paints OVER static text.
-   Named .backdrop, not .field — the contact form owns that class.
+   What replaces them is structure: a single soft wash behind
+   the masthead, and adjacent sections carried on two warm tones
+   one step apart. Anthropic's own system sets the warmth rule —
+   every neutral has a yellow-brown undertone, never a cool grey,
+   and shadows are warm transparent black rather than coloured.
    ============================================================ */
-.backdrop{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
-
-/* A faint measured grid, faded out downward so it reads as a drafting
-   surface at the top rather than graph paper over the whole page. */
-.backdrop::before{
-  content:""; position:absolute; inset:-2px;
-  background-image:
-    linear-gradient(to right,  var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size:72px 72px;
-  -webkit-mask-image:linear-gradient(to bottom, #000 0%, transparent 62%);
-          mask-image:linear-gradient(to bottom, #000 0%, transparent 62%);
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:radial-gradient(75rem 42rem at 50% -18%,
+             color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%);
 }
 
-/* The blooms sit on their own layer so the drift is a cheap transform
-   rather than an animated gradient. */
-.backdrop__blooms{
-  position:absolute; inset:-15%;
-  background:
-    radial-gradient(58rem 42rem at 88% -8%,  var(--bloom-a), transparent 68%),
-    radial-gradient(50rem 38rem at -12% 55%, var(--bloom-b), transparent 68%),
-    radial-gradient(46rem 34rem at 70% 108%, var(--bloom-a), transparent 68%);
-  animation:drift 38s ease-in-out infinite;
-}
-@keyframes drift{
-  0%,100%{ transform:translate3d(0,0,0) scale(1); }
-  50%    { transform:translate3d(-2.5%,1.5%,0) scale(1.08); }
-}
-@media (prefers-reduced-motion: reduce){ .backdrop__blooms{ animation:none; } }
+.section--alt{ background:var(--bg-alt); transition:background-color .35s ease; }
 
 /* ============================================================
    STATUS PANEL (owner only — opened with #status in the URL)
@@ -719,7 +702,6 @@ img{ max-width:100%; display:block; }
 
 <a class="skip" href="#main">Skip to content</a>
 <div class="progress" id="progress" aria-hidden="true"></div>
-<div class="backdrop" aria-hidden="true"><span class="backdrop__blooms"></span></div>
 
 <!-- Owner-only. A static site has no login, so this never changes what
      visitors see: it previews a status and hands you the one line to commit. -->
@@ -771,7 +753,7 @@ img{ max-width:100%; display:block; }
       <p class="hero__eyebrow mono enter">Portfolio</p>
       <h1 class="enter">Shadi</h1>
       <p class="hero__role enter">Developer &nbsp;·&nbsp; Roblox &amp; Python &nbsp;·&nbsp; Geography undergraduate, geospatial track</p>
-      <p class="hero__lede enter">I build games, desktop tools, and 3D assets. Most of my work is in Roblox Studio with Luau and in Python, covering gameplay systems, data persistence, API integration, and interface design.</p>
+      <p class="hero__lede enter">Two Roblox games taken from an empty baseplate to playable. A Python desktop app in the hands of outside testers. A toolchain that reads a live game API and answers real questions with it. I work mainly in Luau and Python.</p>
     </div>
 
     <div class="tally">
@@ -801,9 +783,9 @@ img{ max-width:100%; display:block; }
     <div>
       <h2 class="section__title reveal">About</h2>
       <div class="prose reveal" style="margin-top:1.25rem">
-        <p>I am a self-taught developer working mainly in Luau and Python. Over the past two years I have built two complete Roblox games, a Python desktop application currently in testing with external users, and a set of Python tools that integrate with a live game API.</p>
-        <p>My work covers gameplay systems, client–server architecture, data persistence, and interface design. I also model, rig, and export 3D assets in Blender for use in Roblox.</p>
-        <p>I am studying geography with a focus on geospatial analysis, working toward a role in GIS and spatial data. I am building the technical side alongside my coursework, primarily QGIS, GeoPandas, and remote sensing.</p>
+        <p>I'm a self-taught developer working mainly in Luau and Python. Everything on this page I designed, built and shipped myself — this site included.</p>
+        <p>The work runs from gameplay systems and client–server architecture through data persistence, API integration and interface design. I also model, rig and export 3D assets in Blender for use in Roblox.</p>
+        <p>I'm studying geography on a geospatial track, heading toward GIS and spatial data analysis. The programming I already do is the programming that field runs on, so QGIS, GeoPandas and remote sensing sit alongside the rest rather than apart from it.</p>
       </div>
 
       <p class="mono stack-heading reveal">Technologies</p>
@@ -817,7 +799,7 @@ img{ max-width:100%; display:block; }
 </section>
 
 <!-- ==================== 02 PROJECTS ==================== -->
-<section class="section" id="projects">
+<section class="section section--alt" id="projects">
   <div class="wrap grid">
     <div class="rail">
       <span class="rail__code">02</span>
@@ -825,7 +807,7 @@ img{ max-width:100%; display:block; }
     </div>
     <div>
       <h2 class="section__title reveal">Selected work</h2>
-      <p class="section__lede reveal">Seven projects across game development, desktop applications, data tools, and 3D. Filter by technology.</p>
+      <p class="section__lede reveal">Seven builds across games, desktop software, data tooling and 3D. Each card says what it does and what it was built with.</p>
 
       <div class="deck-head reveal">
         <div class="filters" role="group" aria-label="Filter projects by technology">
@@ -916,7 +898,7 @@ img{ max-width:100%; display:block; }
     </div>
     <div>
       <h2 class="section__title reveal">Skills</h2>
-      <p class="section__lede reveal">Grouped by area. Skills still in development are marked.</p>
+      <p class="section__lede reveal">What I can be given on day one. Anything I'm still learning says so rather than sitting in the same list unmarked.</p>
 
       <div class="skills">
         <div class="reveal">
@@ -968,7 +950,7 @@ img{ max-width:100%; display:block; }
 </section>
 
 <!-- ==================== 04 EXPERIENCE ==================== -->
-<section class="section" id="experience">
+<section class="section section--alt" id="experience">
   <div class="wrap grid">
     <div class="rail">
       <span class="rail__code">04</span>
@@ -1032,7 +1014,7 @@ img{ max-width:100%; display:block; }
     </div>
     <div>
       <h2 class="section__title reveal">Contact</h2>
-      <p class="section__lede reveal">Available for roles and freelance work. Use the form below or email me directly.</p>
+      <p class="section__lede reveal">Open to roles and freelance work. The form reaches me directly, or email me at the address below.</p>
 
       <div class="contact-cols reveal">
         <!--
