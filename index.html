@@ -65,6 +65,7 @@
   --grain-blend: multiply;
   --bloom-a:     rgba(140,29,49,.13);
   --bloom-b:     rgba(168,118,60,.11);
+  --grid-line:   rgba(90,16,32,.055);
 
   --display: "Fraunces", Georgia, "Times New Roman", serif;
   --body:    "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -103,6 +104,7 @@
   --grain-blend: screen;
   --bloom-a:     rgba(227,146,127,.13);
   --bloom-b:     rgba(200,155,98,.09);
+  --grid-line:   rgba(237,224,204,.05);
 }
 
 /* No-JS / system default. The head script stamps data-theme before first
@@ -135,6 +137,7 @@
     --grain-blend: screen;
     --bloom-a:     rgba(227,146,127,.13);
     --bloom-b:     rgba(200,155,98,.09);
+    --grid-line:   rgba(237,224,204,.05);
   }
 }
 
@@ -194,14 +197,60 @@ img{ max-width:100%; display:block; }
    content; a fixed element at z-index 0 paints OVER static text.
    Named .backdrop, not .field — the contact form owns that class.
    ============================================================ */
-.backdrop{
-  position:fixed; inset:0; z-index:-1; pointer-events:none;
+.backdrop{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+
+/* A faint measured grid, faded out downward so it reads as a drafting
+   surface at the top rather than graph paper over the whole page. */
+.backdrop::before{
+  content:""; position:absolute; inset:-2px;
+  background-image:
+    linear-gradient(to right,  var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size:72px 72px;
+  -webkit-mask-image:linear-gradient(to bottom, #000 0%, transparent 62%);
+          mask-image:linear-gradient(to bottom, #000 0%, transparent 62%);
+}
+
+/* The blooms sit on their own layer so the drift is a cheap transform
+   rather than an animated gradient. */
+.backdrop__blooms{
+  position:absolute; inset:-15%;
   background:
     radial-gradient(58rem 42rem at 88% -8%,  var(--bloom-a), transparent 68%),
     radial-gradient(50rem 38rem at -12% 55%, var(--bloom-b), transparent 68%),
     radial-gradient(46rem 34rem at 70% 108%, var(--bloom-a), transparent 68%);
-  transition:background .35s ease;
+  animation:drift 38s ease-in-out infinite;
 }
+@keyframes drift{
+  0%,100%{ transform:translate3d(0,0,0) scale(1); }
+  50%    { transform:translate3d(-2.5%,1.5%,0) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce){ .backdrop__blooms{ animation:none; } }
+
+/* ============================================================
+   STATUS PANEL (owner only — opened with #status in the URL)
+   ============================================================ */
+.statusbar{
+  position:fixed; left:50%; bottom:1.25rem; transform:translateX(-50%);
+  z-index:80; display:none; gap:.75rem; align-items:center;
+  background:var(--surface); border:1px solid var(--rule); border-radius:3px;
+  padding:.7rem .85rem; box-shadow:var(--shadow-card);
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.06em;
+  max-width:min(46rem, calc(100vw - 2rem)); flex-wrap:wrap;
+}
+.statusbar[data-open="true"]{ display:flex; }
+.statusbar button{
+  font:inherit; text-transform:uppercase; letter-spacing:.1em;
+  padding:.4rem .7rem; border:1px solid var(--rule); border-radius:2px;
+  background:transparent; color:var(--muted); cursor:pointer;
+}
+.statusbar button[aria-pressed="true"]{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+.statusbar code{
+  background:var(--bg); border:1px solid var(--rule); border-radius:2px;
+  padding:.35rem .5rem; color:var(--heading); font-size:.68rem;
+  overflow-x:auto; max-width:100%;
+}
+.statusbar__hint{ color:var(--muted); text-transform:none; letter-spacing:0; }
 
 /* ============================================================
    SCROLL PROGRESS
@@ -217,7 +266,9 @@ img{ max-width:100%; display:block; }
    ============================================================ */
 .nav{
   position:fixed; inset:0 0 auto 0; z-index:55;
-  display:flex; align-items:center; gap:1.5rem;
+  /* Three tracks so the links sit dead centre regardless of how wide the
+     brand or the status pill happen to be. */
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:1.5rem;
   padding:.85rem var(--pad-x);
   background:color-mix(in srgb, var(--bg) 88%, transparent);
   -webkit-backdrop-filter:blur(12px) saturate(1.4); backdrop-filter:blur(12px) saturate(1.4);
@@ -228,7 +279,7 @@ img{ max-width:100%; display:block; }
 
 .nav__mark{
   display:flex; align-items:center; gap:.6rem;
-  text-decoration:none; color:var(--text); margin-right:auto;
+  text-decoration:none; color:var(--text); justify-self:start;
   padding-block:.35rem; /* keeps the tap target above 40px on phones */
 }
 .nav__glyph{
@@ -242,7 +293,7 @@ img{ max-width:100%; display:block; }
 }
 .nav__name{ font-family:var(--mono); font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; }
 
-.nav__links{ display:flex; gap:1.4rem; }
+.nav__links{ display:flex; gap:1.4rem; justify-self:center; }
 .nav__links a{
   font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase;
   color:var(--muted); text-decoration:none; padding:.25rem 0;
@@ -251,10 +302,25 @@ img{ max-width:100%; display:block; }
 .nav__links a:hover,
 .nav__links a[aria-current="true"]{ color:var(--heading); border-bottom-color:var(--accent); }
 
-.status{ display:flex; align-items:center; gap:.5rem; color:var(--muted); }
+.nav__end{ display:flex; align-items:center; gap:.75rem; justify-self:end; }
+
+.status{
+  display:flex; align-items:center; gap:.5rem; color:var(--muted);
+  background:transparent; border:1px solid transparent; border-radius:2px;
+  padding:.35rem .1rem; font:inherit; cursor:default;
+}
+/* Only the owner gets a clickable pill — see the status panel in the script. */
+.status[data-owner="true"]{ cursor:pointer; padding-inline:.55rem; }
+.status[data-owner="true"]:hover{ border-color:var(--rule); color:var(--heading); }
+
+/* Dot colour follows the status, not the accent. */
+.status__dot{ background:var(--status-colour, var(--accent)); }
+.nav[data-status="busy"]{ --status-colour:#C8862F; }
+.nav[data-status="closed"]{ --status-colour:var(--muted); }
+.nav[data-status="closed"] .status__dot{ animation:none; }
 .status__dot{
-  width:.5rem; height:.5rem; border-radius:50%; background:var(--accent); flex:none;
-  box-shadow:0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);
+  width:.5rem; height:.5rem; border-radius:50%; flex:none;
+  box-shadow:0 0 0 0 color-mix(in srgb, var(--status-colour, var(--accent)) 50%, transparent);
   animation:pulse 2.6s ease-out infinite;
 }
 @keyframes pulse{
@@ -285,7 +351,9 @@ img{ max-width:100%; display:block; }
 :root[data-theme="light"] .theme-toggle .i-moon{ display:block; }
 
 @media (max-width: 60rem){
-  .nav{ gap:.85rem; }
+  .nav{ display:flex; gap:.85rem; }
+  .nav__mark{ margin-right:auto; }
+  .nav__links{ order:3; flex-basis:100%; }
   .nav__links{
     gap:1.1rem; min-width:0; overflow-x:auto;
     scrollbar-width:none; -ms-overflow-style:none;
@@ -295,7 +363,10 @@ img{ max-width:100%; display:block; }
 }
 @media (max-width: 44rem){
   .nav__name{ display:none; }
-  .status span:last-child{ display:none; }
+  /* The status label stays on phones. It used to be hidden to save room, but
+     now that the status varies (open / busy / closed) the dot colour alone
+     would be carrying the meaning, and colour alone is not accessible. */
+  .status{ font-size:.64rem; }
   /* Full 44px touch target on phones. */
   .theme-toggle{ width:2.75rem; height:2.75rem; }
 }
@@ -648,10 +719,21 @@ img{ max-width:100%; display:block; }
 
 <a class="skip" href="#main">Skip to content</a>
 <div class="progress" id="progress" aria-hidden="true"></div>
-<div class="backdrop" aria-hidden="true"></div>
+<div class="backdrop" aria-hidden="true"><span class="backdrop__blooms"></span></div>
+
+<!-- Owner-only. A static site has no login, so this never changes what
+     visitors see: it previews a status and hands you the one line to commit. -->
+<div class="statusbar" id="statusbar" role="group" aria-label="Set availability status">
+  <span>Status</span>
+  <button type="button" data-status="open">Open</button>
+  <button type="button" data-status="busy">Busy</button>
+  <button type="button" data-status="closed">Closed</button>
+  <code id="status-line"></code>
+  <span class="statusbar__hint">Paste into index.html, commit, push.</span>
+</div>
 
 
-<nav class="nav" id="nav">
+<nav class="nav" id="nav" data-status="open">
   <a class="nav__mark" href="#top">
     <span class="nav__glyph" aria-hidden="true">S</span>
     <span class="nav__name">Shadi</span>
@@ -663,19 +745,21 @@ img{ max-width:100%; display:block; }
     <a href="#experience">Experience</a>
     <a href="#contact">Contact</a>
   </div>
-  <div class="status mono">
-    <span class="status__dot" aria-hidden="true"></span>
-    <span>Open to work</span>
-  </div>
-  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
+  <div class="nav__end">
+    <button class="status mono" id="status-pill" type="button" aria-live="polite">
+      <span class="status__dot" aria-hidden="true"></span>
+      <span id="status-text">Open to work</span>
+    </button>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
     <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
     </svg>
     <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="12" cy="12" r="4.2"/>
       <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
-    </svg>
-  </button>
+      </svg>
+    </button>
+  </div>
 </nav>
 
 <main id="main">
@@ -980,7 +1064,7 @@ img{ max-width:100%; display:block; }
             <li><a href="https://github.com/shadiossamamain-rgb">GitHub <span>Code</span></a></li>
             <!-- The address is assembled by JavaScript at runtime so it does not
                  appear in the page source. -->
-            <li><a id="mail-link" href="#contact">Email <span>Direct</span></a></li>
+            <li><a id="mail-link" href="#contact"><span id="mail-text">Email</span> <span>Direct</span></a></li>
             <!--
               TO ADD LINKEDIN: uncomment and replace YOUR_HANDLE.
               <li><a href="https://linkedin.com/in/YOUR_HANDLE">LinkedIn <span>Profile</span></a></li>
@@ -1030,9 +1114,14 @@ img{ max-width:100%; display:block; }
   /* ---- contact: build the mailto at runtime so the address is not in
           the page source ---- */
   var mailLink = document.getElementById("mail-link");
-  var mailUser = "ossashadi.main";
-  var mailHost = "gmail.com";
-  mailLink.setAttribute("href", "mailto:" + mailUser + "@" + mailHost);
+  var mailUser = "shadiossama";
+  var mailHost = "outlook.com";
+  var address = mailUser + "@" + mailHost;
+  mailLink.setAttribute("href", "mailto:" + address);
+  /* Shown, not just linked — a contact link with no visible address makes
+     people hunt for it. Still assembled at runtime so it is absent from the
+     served HTML that basic scrapers read. */
+  document.getElementById("mail-text").textContent = address;
 
   /* ---- scroll progress + nav hairline ---- */
   var nav = document.getElementById("nav");
@@ -1136,6 +1225,75 @@ img{ max-width:100%; display:block; }
   });
 
 
+
+
+  /* ---- availability status ----
+     The committed value is data-status on <nav>; that is what every visitor
+     sees. Adding #status to the URL opens an owner panel that previews the
+     other states and prints the exact line to commit. Nothing is persisted —
+     a static page has no login, so pretending otherwise would only let the
+     live site and your local view drift apart without you noticing. */
+  (function () {
+    var LABELS = {
+      open:   "Open to work",
+      busy:   "Busy — limited availability",
+      closed: "Not looking right now"
+    };
+    var nav = document.getElementById("nav");
+    var pill = document.getElementById("status-pill");
+    var text = document.getElementById("status-text");
+    var bar = document.getElementById("statusbar");
+    var line = document.getElementById("status-line");
+    if (!nav || !pill || !text) { return; }
+
+    function paint(key) {
+      if (!LABELS[key]) { key = "open"; }
+      nav.setAttribute("data-status", key);
+      text.textContent = LABELS[key];
+      pill.setAttribute("aria-label", "Availability: " + LABELS[key]);
+      if (line) { line.textContent = '<nav class="nav" id="nav" data-status="' + key + '">'; }
+      if (bar) {
+        Array.prototype.forEach.call(bar.querySelectorAll("button"), function (b) {
+          b.setAttribute("aria-pressed", String(b.getAttribute("data-status") === key));
+        });
+      }
+    }
+
+    paint(nav.getAttribute("data-status") || "open");
+
+    function ownerMode() {
+      pill.setAttribute("data-owner", "true");
+      if (bar) { bar.setAttribute("data-open", "true"); }
+    }
+    function closeOwner() {
+      pill.removeAttribute("data-owner");
+      if (bar) { bar.removeAttribute("data-open"); }
+    }
+    if (location.hash === "#status") { ownerMode(); }
+    window.addEventListener("hashchange", function () {
+      if (location.hash === "#status") { ownerMode(); } else { closeOwner(); }
+    });
+    /* Second route in, so the panel is reachable without editing the URL. */
+    window.addEventListener("keydown", function (e) {
+      if (e.ctrlKey && e.shiftKey && (e.key === "S" || e.key === "s")) {
+        e.preventDefault();
+        if (bar && bar.getAttribute("data-open") === "true") { closeOwner(); } else { ownerMode(); }
+      }
+      if (e.key === "Escape") { closeOwner(); }
+    });
+
+    if (bar) {
+      Array.prototype.forEach.call(bar.querySelectorAll("button"), function (b) {
+        b.addEventListener("click", function () { paint(b.getAttribute("data-status")); });
+      });
+    }
+    pill.addEventListener("click", function () {
+      if (pill.getAttribute("data-owner") !== "true") { return; }
+      var order = ["open", "busy", "closed"];
+      var next = order[(order.indexOf(nav.getAttribute("data-status")) + 1) % order.length];
+      paint(next);
+    });
+  })();
 
   /* ---- contact form: never fail silently ---- */
   var form = document.getElementById("contact-form");
