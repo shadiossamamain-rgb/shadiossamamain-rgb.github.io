@@ -265,11 +265,16 @@ body::before{
   transform-box:fill-box; transform-origin:50% 50%;
   animation:blink 7s ease-in-out infinite;
 }
-/* The tail is its own group so it can sway from where it meets the flank. */
-.cat__tail{
-  transform-box:fill-box; transform-origin:50% 100%;
-  animation:sway 7.5s ease-in-out infinite;
-}
+/* Pixel art does not rotate: a rotated sprite shears the grid and reads as
+   a smear. The tail is three drawn poses instead, swapped instantly, which
+   is how sprite animation actually works. */
+.cat__tail{ opacity:0; }
+.cat__tail--a{ animation:tailA 7s infinite; }
+.cat__tail--b{ animation:tailB 7s infinite; }
+.cat__tail--c{ animation:tailC 7s infinite; }
+@keyframes tailA{ 0%,71.9%{ opacity:1 } 72%,100%{ opacity:0 } }
+@keyframes tailB{ 0%,71.9%{ opacity:0 } 72%,79.9%{ opacity:1 } 80%,87.9%{ opacity:0 } 88%,95.9%{ opacity:1 } 96%,100%{ opacity:0 } }
+@keyframes tailC{ 0%,79.9%{ opacity:0 } 80%,87.9%{ opacity:1 } 88%,100%{ opacity:0 } }
 @keyframes sway{
   0%,55%,100%{ transform:rotate(0deg); }
   68%        { transform:rotate(-7deg); }
@@ -291,7 +296,9 @@ body::before{
 }
 
 @media (prefers-reduced-motion: reduce){
-  .cat__body,.cat__eyes,.cat__tail{ animation:none; }
+  .cat__body,.cat__eyes{ animation:none; }
+  .cat__tail{ animation:none; }
+  .cat__tail--a{ opacity:1; }
   .cat__pupil{ transition:none; }
 }
 @media (max-width: 44rem){ .cat{ right:.9rem; bottom:.9rem; width:46px; } }
@@ -821,7 +828,7 @@ body::before{
       <clipPath id="socketL"><rect x="2" y="6" width="2" height="2"/></clipPath>
       <clipPath id="socketR"><rect x="9" y="6" width="2" height="2"/></clipPath>
     </defs>
-    <g class="cat__tail">
+    <g class="cat__tail cat__tail--a">
       <rect x="20" y="3" width="3" height="1" fill="var(--cat-outline)"/>
       <rect x="19" y="4" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="20" y="4" width="3" height="1" fill="var(--cat-fur)"/>
@@ -842,7 +849,59 @@ body::before{
       <rect x="19" y="11" width="5" height="1" fill="var(--cat-fur)"/>
       <rect x="18" y="12" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="19" y="12" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="13" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="17" y="13" width="2" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="13" width="5" height="1" fill="var(--cat-fur)"/>
+    </g>
+    <g class="cat__tail cat__tail--b">
+      <rect x="19" y="3" width="3" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="4" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="4" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="22" y="4" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="5" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="5" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="5" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="17" y="6" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="6" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="6" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="17" y="7" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="7" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="7" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="17" y="8" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="8" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="8" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="17" y="9" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="9" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="9" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="10" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="10" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="18" y="11" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="11" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="18" y="12" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="12" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="17" y="13" width="2" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="13" width="5" height="1" fill="var(--cat-fur)"/>
+    </g>
+    <g class="cat__tail cat__tail--c">
+      <rect x="21" y="3" width="3" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="4" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="21" y="4" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="20" y="5" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="21" y="5" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="6" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="6" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="7" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="7" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="8" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="8" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="9" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="9" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="18" y="10" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="10" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="18" y="11" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="11" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="18" y="12" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="12" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="17" y="13" width="2" height="1" fill="var(--cat-outline)"/>
       <rect x="19" y="13" width="5" height="1" fill="var(--cat-fur)"/>
     </g>
     <g class="cat__body">
@@ -885,9 +944,7 @@ body::before{
       <rect x="15" y="8" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="0" y="9" width="15" height="1" fill="var(--cat-fur)"/>
       <rect x="15" y="9" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="0" y="10" width="1" height="1" fill="var(--cat-fur)"/>
-      <rect x="1" y="10" width="13" height="1" fill="var(--cat-collar)"/>
-      <rect x="14" y="10" width="1" height="1" fill="var(--cat-fur)"/>
+      <rect x="0" y="10" width="15" height="1" fill="var(--cat-collar)"/>
       <rect x="15" y="10" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="0" y="11" width="6" height="1" fill="var(--cat-fur)"/>
       <rect x="6" y="11" width="2" height="1" fill="var(--cat-bell)"/>
@@ -898,7 +955,6 @@ body::before{
       <rect x="0" y="13" width="5" height="1" fill="var(--cat-fur)"/>
       <rect x="5" y="13" width="3" height="1" fill="var(--cat-patch)"/>
       <rect x="8" y="13" width="9" height="1" fill="var(--cat-fur)"/>
-      <rect x="17" y="13" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="0" y="14" width="4" height="1" fill="var(--cat-fur)"/>
       <rect x="4" y="14" width="5" height="1" fill="var(--cat-patch)"/>
       <rect x="9" y="14" width="15" height="1" fill="var(--cat-fur)"/>
