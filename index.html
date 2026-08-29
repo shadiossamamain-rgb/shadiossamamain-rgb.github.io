@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shadi — Portfolio</title>
-<meta name="description" content="Shadi — developer working in Roblox Studio, Python, and Blender. Games, desktop tools, and 3D assets.">
+<title>Shadi · Portfolio</title>
+<meta name="description" content="Shadi. Developer working in Roblox Studio, Python, and Blender. Games, desktop tools, and 3D assets.">
 <meta name="theme-color" content="#EDE3D1">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%235A1020'/><text x='16' y='23' font-family='Georgia,serif' font-size='19' font-weight='700' fill='%23EDE3D1' text-anchor='middle'>S</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -272,7 +272,7 @@ body::before{
 .cat__tail--a{ animation:tailA 7s infinite; }
 .cat__tail--b{ animation:tailB 7s infinite; }
 .cat__tail--c{ animation:tailC 7s infinite; }
-@keyframes tailA{ 0%,71.9%{ opacity:1 } 72%,100%{ opacity:0 } }
+@keyframes tailA{ 0%,71.9%{ opacity:1 } 72%,95.9%{ opacity:0 } 96%,100%{ opacity:1 } }
 @keyframes tailB{ 0%,71.9%{ opacity:0 } 72%,79.9%{ opacity:1 } 80%,87.9%{ opacity:0 } 88%,95.9%{ opacity:1 } 96%,100%{ opacity:0 } }
 @keyframes tailC{ 0%,79.9%{ opacity:0 } 80%,87.9%{ opacity:1 } 88%,100%{ opacity:0 } }
 /* Pupils are moved from script; the transition is what makes the glance
@@ -651,10 +651,13 @@ body::before{
 .card__idx{ font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; color:var(--accent); }
 .card__state{ font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); text-align:right; }
 .card h3{ margin-top:.9rem; font-size:1.5rem; }
-.card__desc{ margin-top:.75rem; font-size:.95rem; }
+.card__desc{ margin-top:.75rem; margin-bottom:1.1rem; font-size:.95rem; }
 
 .meta{
-  margin-top:1.1rem; padding-top:.85rem; border-top:1px dashed var(--rule);
+  /* auto margin pushes this and the tags below it to the foot of the card, so
+     the meta lines sit on one level across the deck no matter how long each
+     description runs. */
+  margin-top:auto; padding-top:.85rem; border-top:1px dashed var(--rule);
   display:flex; flex-wrap:wrap; gap:.35rem .55rem;
   font-family:var(--mono); font-size:.68rem; letter-spacing:.03em; color:var(--muted);
 }
@@ -823,64 +826,13 @@ body::before{
       <clipPath id="socketR"><rect x="9" y="6" width="2" height="2"/></clipPath>
     </defs>
     <g class="cat__tail cat__tail--a">
-      <rect x="20" y="3" width="3" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="3" width="2" height="1" fill="var(--cat-outline)"/>
       <rect x="19" y="4" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="20" y="4" width="3" height="1" fill="var(--cat-fur)"/>
-      <rect x="23" y="4" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="5" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="20" y="5" width="4" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="6" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="6" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="7" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="7" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="8" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="8" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="9" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="9" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="10" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="10" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="11" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="11" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="12" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="12" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="17" y="13" width="2" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="13" width="5" height="1" fill="var(--cat-fur)"/>
-    </g>
-    <g class="cat__tail cat__tail--b">
-      <rect x="19" y="3" width="3" height="1" fill="var(--cat-outline)"/>
-      <rect x="18" y="4" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="4" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="20" y="4" width="2" height="1" fill="var(--cat-fur)"/>
       <rect x="22" y="4" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="18" y="5" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="5" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="5" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="5" width="3" height="1" fill="var(--cat-fur)"/>
       <rect x="23" y="5" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="17" y="6" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="18" y="6" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="23" y="6" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="17" y="7" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="18" y="7" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="23" y="7" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="17" y="8" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="18" y="8" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="23" y="8" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="17" y="9" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="18" y="9" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="23" y="9" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="18" y="10" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="10" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="11" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="11" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="12" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="12" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="17" y="13" width="2" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="13" width="5" height="1" fill="var(--cat-fur)"/>
-    </g>
-    <g class="cat__tail cat__tail--c">
-      <rect x="21" y="3" width="3" height="1" fill="var(--cat-outline)"/>
-      <rect x="20" y="4" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="21" y="4" width="3" height="1" fill="var(--cat-fur)"/>
-      <rect x="20" y="5" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="21" y="5" width="3" height="1" fill="var(--cat-fur)"/>
       <rect x="19" y="6" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="20" y="6" width="4" height="1" fill="var(--cat-fur)"/>
       <rect x="19" y="7" width="1" height="1" fill="var(--cat-outline)"/>
@@ -889,14 +841,67 @@ body::before{
       <rect x="20" y="8" width="4" height="1" fill="var(--cat-fur)"/>
       <rect x="19" y="9" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="20" y="9" width="4" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="10" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="10" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="11" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="11" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="18" y="12" width="1" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="12" width="5" height="1" fill="var(--cat-fur)"/>
-      <rect x="17" y="13" width="2" height="1" fill="var(--cat-outline)"/>
-      <rect x="19" y="13" width="5" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="10" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="10" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="11" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="11" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="12" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="12" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="18" y="13" width="2" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="13" width="4" height="1" fill="var(--cat-fur)"/>
+    </g>
+    <g class="cat__tail cat__tail--b">
+      <rect x="19" y="3" width="2" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="4" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="4" width="2" height="1" fill="var(--cat-fur)"/>
+      <rect x="21" y="4" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="5" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="5" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="22" y="5" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="6" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="6" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="6" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="7" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="7" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="7" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="8" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="8" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="8" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="18" y="9" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="9" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="9" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="19" y="10" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="10" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="11" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="11" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="12" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="12" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="18" y="13" width="2" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="13" width="4" height="1" fill="var(--cat-fur)"/>
+    </g>
+    <g class="cat__tail cat__tail--c">
+      <rect x="21" y="3" width="2" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="4" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="21" y="4" width="2" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="4" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="5" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="21" y="5" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="20" y="6" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="21" y="6" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="20" y="7" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="21" y="7" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="20" y="8" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="21" y="8" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="20" y="9" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="21" y="9" width="3" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="10" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="10" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="11" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="11" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="19" y="12" width="1" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="12" width="4" height="1" fill="var(--cat-fur)"/>
+      <rect x="18" y="13" width="2" height="1" fill="var(--cat-outline)"/>
+      <rect x="20" y="13" width="4" height="1" fill="var(--cat-fur)"/>
     </g>
     <g class="cat__body">
       <rect x="1" y="0" width="1" height="1" fill="var(--cat-outline)"/>
@@ -949,16 +954,19 @@ body::before{
       <rect x="0" y="13" width="5" height="1" fill="var(--cat-fur)"/>
       <rect x="5" y="13" width="3" height="1" fill="var(--cat-patch)"/>
       <rect x="8" y="13" width="9" height="1" fill="var(--cat-fur)"/>
+      <rect x="17" y="13" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="0" y="14" width="4" height="1" fill="var(--cat-fur)"/>
       <rect x="4" y="14" width="5" height="1" fill="var(--cat-patch)"/>
-      <rect x="9" y="14" width="15" height="1" fill="var(--cat-fur)"/>
+      <rect x="9" y="14" width="14" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="14" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="0" y="15" width="4" height="1" fill="var(--cat-fur)"/>
       <rect x="4" y="15" width="5" height="1" fill="var(--cat-patch)"/>
-      <rect x="9" y="15" width="15" height="1" fill="var(--cat-fur)"/>
+      <rect x="9" y="15" width="14" height="1" fill="var(--cat-fur)"/>
+      <rect x="23" y="15" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="0" y="16" width="5" height="1" fill="var(--cat-fur)"/>
       <rect x="5" y="16" width="3" height="1" fill="var(--cat-patch)"/>
       <rect x="8" y="16" width="14" height="1" fill="var(--cat-fur)"/>
-      <rect x="22" y="16" width="2" height="1" fill="var(--cat-outline)"/>
+      <rect x="22" y="16" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="0" y="17" width="21" height="1" fill="var(--cat-fur)"/>
       <rect x="21" y="17" width="1" height="1" fill="var(--cat-outline)"/>
       <rect x="0" y="18" width="18" height="1" fill="var(--cat-fur)"/>
@@ -1001,7 +1009,7 @@ body::before{
 
 
 <nav class="nav" id="nav" data-status="open">
-  <a class="nav__mark" href="#top" aria-label="Shadi — back to top">
+  <a class="nav__mark" href="#top" aria-label="Shadi, back to top">
     <span class="nav__glyph" aria-hidden="true">S</span>
     <span class="nav__name" aria-hidden="true">hadi</span>
   </a>
@@ -1072,8 +1080,8 @@ body::before{
     <div>
       <h2 class="section__title reveal">About</h2>
       <div class="prose reveal" style="margin-top:1.25rem">
-        <p>I'm a self-taught developer working mainly in Luau and Python. Everything on this page I designed, built and shipped myself — this site included.</p>
-        <p>The work runs from gameplay systems and client–server architecture through data persistence, API integration and interface design. I also model, rig and export 3D assets in Blender for use in Roblox.</p>
+        <p>I'm a self-taught developer working mainly in Luau and Python. Everything on this page I designed, built and shipped myself, this site included.</p>
+        <p>The work runs from gameplay systems and client-server architecture through data persistence, API integration and interface design. I also model, rig and export 3D assets in Blender for use in Roblox.</p>
         <p>I'm studying geography on a geospatial track, heading toward GIS and spatial data analysis. The programming I already do is the programming that field runs on, so QGIS, GeoPandas and remote sensing sit alongside the rest rather than apart from it.</p>
       </div>
 
@@ -1199,7 +1207,7 @@ body::before{
         <div class="reveal">
           <h3>Game development</h3>
           <ul>
-            <li>Roblox Studio</li><li>Client–server architecture</li><li>RemoteEvent design</li>
+            <li>Roblox Studio</li><li>Client-server architecture</li><li>RemoteEvent design</li>
             <li>DataStore persistence</li><li>State machines</li><li>Game economy balancing</li>
           </ul>
         </div>
@@ -1250,7 +1258,7 @@ body::before{
 
       <div class="timeline">
         <article class="entry reveal">
-          <div class="entry__years">2025 — present</div>
+          <div class="entry__years">2025 to present</div>
           <div>
             <h3>Independent developer</h3>
             <p class="entry__org">Self-directed projects</p>
@@ -1268,16 +1276,16 @@ body::before{
         </article>
 
         <article class="entry reveal">
-          <div class="entry__years">2025 — 2026</div>
+          <div class="entry__years">2025 to 2026</div>
           <div>
             <h3>Roblox development</h3>
-            <p class="entry__org">Luau · Client–server systems</p>
+            <p class="entry__org">Luau · Client-server systems</p>
             <p class="entry__body">Learned Luau and the Roblox service architecture by building rather than by tutorial, covering wave systems, randomised reward systems, inventory persistence, user interface, and state machines across two full projects.</p>
           </div>
         </article>
 
         <article class="entry reveal">
-          <div class="entry__years">— 2030</div>
+          <div class="entry__years">Until 2030</div>
           <div>
             <h3>BSc Geography, geospatial track</h3>
             <p class="entry__org">In progress</p>
@@ -1507,7 +1515,7 @@ body::before{
   (function () {
     var LABELS = {
       open:   "Open to work",
-      busy:   "Busy — limited availability",
+      busy:   "Busy, limited availability",
       closed: "Not looking right now"
     };
     var nav = document.getElementById("nav");
