@@ -211,6 +211,63 @@ body::before{
 .section--alt{ background:var(--bg-alt); transition:background-color .35s ease; }
 
 /* ============================================================
+   SLEEPING CAT
+   Hand-plotted pixel art, inline SVG on a 12x10 grid so it stays
+   crisp at any size and costs no request. It breathes slowly and
+   is otherwise still — the point is calm, not attention.
+
+   Fixed bottom-right, so it fades out once the footer arrives
+   rather than sitting on top of it.
+   ============================================================ */
+.cat{
+  position:fixed; right:1.5rem; bottom:1.25rem; z-index:40;
+  width:clamp(52px, 5.5vw, 74px); pointer-events:none;
+  color:var(--heading); opacity:.9;
+  transition:opacity .5s ease;
+}
+.cat[data-hide="true"]{ opacity:0; }
+.cat svg{ width:100%; height:auto; display:block; }
+.cat__body{
+  transform-box:fill-box; transform-origin:50% 100%;
+  animation:breathe 5s ease-in-out infinite;
+}
+@keyframes breathe{
+  0%,100%{ transform:scaleY(1); }
+  50%    { transform:scaleY(1.025); }
+}
+/* Both eyes sit on the same rows, so the group's vertical centre is the eye
+   line and a scaleY on the group shuts them like lids. */
+.cat__eyes{
+  transform-box:fill-box; transform-origin:50% 50%;
+  animation:blink 7s ease-in-out infinite;
+}
+@keyframes blink{
+  0%,93%,100%{ transform:scaleY(1); }
+  95.5%,96.5%{ transform:scaleY(.08); }
+}
+/* The tail keeps its own slow rhythm, anchored at the base so the tip
+   is what travels. */
+.cat__tail{
+  transform-box:fill-box; transform-origin:0% 100%;
+  animation:flick 6.5s ease-in-out infinite;
+}
+@keyframes flick{
+  0%,58%,100%{ transform:rotate(0deg); }
+  66%        { transform:rotate(-9deg); }
+  74%        { transform:rotate(6deg); }
+  82%        { transform:rotate(-3deg); }
+}
+/* Pupils are moved from script; the transition is what makes the look
+   glide rather than snap. */
+.cat__pupils{ transition:transform .45s cubic-bezier(.2,.7,.3,1); }
+
+@media (prefers-reduced-motion: reduce){
+  .cat__body,.cat__eyes,.cat__tail{ animation:none; }
+  .cat__pupils{ transition:none; }
+}
+@media (max-width: 44rem){ .cat{ right:.9rem; bottom:.9rem; width:46px; } }
+
+/* ============================================================
    STATUS PANEL (owner only — opened with #status in the URL)
    ============================================================ */
 .statusbar{
@@ -261,7 +318,7 @@ body::before{
 .nav[data-scrolled="true"]{ border-bottom-color:var(--rule); }
 
 .nav__mark{
-  display:flex; align-items:center; gap:.6rem;
+  display:flex; align-items:center; gap:.3rem;
   text-decoration:none; color:var(--text); justify-self:start;
   padding-block:.35rem; /* keeps the tap target above 40px on phones */
 }
@@ -274,7 +331,14 @@ body::before{
   border-radius:4px;
   transition:background-color .35s ease, color .35s ease;
 }
-.nav__name{ font-family:var(--mono); font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; }
+.nav__name{
+  /* Set in the display face at the tile's own size so the mark and the tail
+     read as one word rather than a logo next to a label. */
+  font-family:var(--display); font-weight:700; font-size:1.05rem;
+  font-variation-settings:"SOFT" 0,"WONK" 1;
+  letter-spacing:-.005em; text-transform:none; color:var(--heading);
+  line-height:1;
+}
 
 .nav__links{ display:flex; gap:1.4rem; justify-self:center; }
 .nav__links a{
@@ -705,6 +769,57 @@ body::before{
 
 <!-- Owner-only. A static site has no login, so this never changes what
      visitors see: it previews a status and hands you the one line to commit. -->
+<div class="cat" id="cat" aria-hidden="true">
+  <svg viewBox="0 0 16 19" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+    <g class="cat__body" fill="currentColor">
+      <!-- pointed ears -->
+      <rect x="3" y="0" width="1" height="1"/><rect x="10" y="0" width="1" height="1"/>
+      <rect x="2" y="1" width="3" height="1"/><rect x="9" y="1" width="3" height="1"/>
+      <rect x="2" y="2" width="4" height="1"/><rect x="8" y="2" width="4" height="1"/>
+      <!-- head -->
+      <rect x="1" y="3" width="12" height="1"/>
+      <rect x="1" y="4" width="12" height="1"/>
+      <rect x="0" y="5" width="14" height="1"/>
+      <rect x="0" y="6" width="14" height="1"/>
+      <rect x="0" y="7" width="14" height="1"/>
+      <rect x="1" y="8" width="12" height="1"/>
+      <rect x="2" y="9" width="10" height="1"/>
+      <!-- body, narrower than the head so it reads as sitting -->
+      <rect x="3" y="10" width="9" height="1"/>
+      <rect x="3" y="11" width="9" height="1"/>
+      <rect x="2" y="12" width="11" height="1"/>
+      <rect x="2" y="13" width="11" height="1"/>
+      <rect x="2" y="14" width="11" height="1"/>
+      <rect x="2" y="15" width="11" height="1"/>
+      <rect x="1" y="16" width="13" height="1"/>
+      <rect x="1" y="17" width="13" height="1"/>
+      <!-- front paws -->
+      <rect x="2" y="18" width="4" height="1"/>
+      <rect x="9" y="18" width="4" height="1"/>
+    </g>
+    <!-- tail, sweeping out and up behind; flicks on its own -->
+    <g class="cat__tail" fill="currentColor">
+      <rect x="14" y="15" width="1" height="1"/>
+      <rect x="15" y="14" width="1" height="1"/>
+      <rect x="15" y="13" width="1" height="1"/>
+      <rect x="15" y="12" width="1" height="1"/>
+      <rect x="14" y="11" width="1" height="1"/>
+    </g>
+    <!-- big round eyes: the whole reason these read as charming rather
+         than as a blob. Gold iris, dark pupil, and they blink. -->
+    <g class="cat__eyes">
+      <g fill="var(--brass)">
+        <rect x="2" y="5" width="3" height="3"/>
+        <rect x="9" y="5" width="3" height="3"/>
+      </g>
+      <g class="cat__pupils" fill="currentColor">
+        <rect x="3" y="6" width="1" height="1"/>
+        <rect x="10" y="6" width="1" height="1"/>
+      </g>
+    </g>
+  </svg>
+</div>
+
 <div class="statusbar" id="statusbar" role="group" aria-label="Set availability status">
   <span>Status</span>
   <button type="button" data-status="open">Open</button>
@@ -716,9 +831,9 @@ body::before{
 
 
 <nav class="nav" id="nav" data-status="open">
-  <a class="nav__mark" href="#top">
+  <a class="nav__mark" href="#top" aria-label="Shadi — back to top">
     <span class="nav__glyph" aria-hidden="true">S</span>
-    <span class="nav__name">Shadi</span>
+    <span class="nav__name" aria-hidden="true">hadi</span>
   </a>
   <div class="nav__links">
     <a href="#about">About</a>
@@ -1275,6 +1390,45 @@ body::before{
       var next = order[(order.indexOf(nav.getAttribute("data-status")) + 1) % order.length];
       paint(next);
     });
+  })();
+
+  /* ---- the cat watches the cursor ----
+     Pupils travel less than a pixel-unit inside the iris, which is the whole
+     trick: any more and the eyes read as googly rather than attentive. With
+     no pointer (touch, or before the first move) they stay centred. */
+  (function () {
+    var pupils = document.querySelector(".cat__pupils");
+    var cat = document.getElementById("cat");
+    if (!pupils || !cat || reduced) { return; }
+    var pending = false, mx = 0, my = 0;
+
+    function track() {
+      pending = false;
+      var b = cat.getBoundingClientRect();
+      if (!b.width) { return; }
+      var cx = b.left + b.width / 2, cy = b.top + b.height * 0.35;
+      var dx = mx - cx, dy = my - cy;
+      var d = Math.sqrt(dx * dx + dy * dy) || 1;
+      var reach = Math.max(window.innerWidth, window.innerHeight) * 0.35;
+      var pull = Math.min(1, d / reach);
+      pupils.style.transform =
+        "translate(" + ((dx / d) * pull * 0.85).toFixed(2) + "px," +
+                       ((dy / d) * pull * 0.7).toFixed(2) + "px)";
+    }
+    window.addEventListener("pointermove", function (e) {
+      mx = e.clientX; my = e.clientY;
+      if (!pending) { pending = true; requestAnimationFrame(track); }
+    }, { passive: true });
+  })();
+
+  /* ---- the cat steps aside for the footer ---- */
+  (function () {
+    var cat = document.getElementById("cat");
+    var footer = document.querySelector(".footer");
+    if (!cat || !footer || !("IntersectionObserver" in window)) { return; }
+    new IntersectionObserver(function (entries) {
+      cat.setAttribute("data-hide", String(entries[0].isIntersecting));
+    }, { threshold: 0.01 }).observe(footer);
   })();
 
   /* ---- contact form: never fail silently ---- */
