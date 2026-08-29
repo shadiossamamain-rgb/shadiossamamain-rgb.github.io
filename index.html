@@ -64,6 +64,9 @@
   --shadow-card: 0 1px 2px rgba(60,40,20,.05), 0 12px 28px -20px rgba(60,40,20,.3);
   --grain-op:    .045;
   --grain-blend: multiply;
+  --cat-fur:     #5A1020;
+  --cat-eye:     #D9A441;
+  --cat-pupil:   #2A1C18;
   --bloom-a:     rgba(140,29,49,.13);
   --bloom-b:     rgba(168,118,60,.11);
 
@@ -103,6 +106,9 @@
   --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.6);
   --grain-op:    .05;
   --grain-blend: screen;
+  --cat-fur:     #573F45;   /* still a dark cat, just lifted off the ground */
+  --cat-eye:     #E8B75C;
+  --cat-pupil:   #24181C;
   --bloom-a:     rgba(227,146,127,.13);
   --bloom-b:     rgba(200,155,98,.09);
 }
@@ -136,6 +142,9 @@
     --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.6);
     --grain-op:    .05;
     --grain-blend: screen;
+    --cat-fur:     #573F45;
+    --cat-eye:     #E8B75C;
+    --cat-pupil:   #24181C;
     --bloom-a:     rgba(227,146,127,.13);
     --bloom-b:     rgba(200,155,98,.09);
   }
@@ -222,7 +231,7 @@ body::before{
 .cat{
   position:fixed; right:1.5rem; bottom:1.25rem; z-index:40;
   width:clamp(52px, 5.5vw, 74px); pointer-events:none;
-  color:var(--heading); opacity:.9;
+  color:var(--cat-fur); opacity:1;
   transition:opacity .5s ease;
 }
 .cat[data-hide="true"]{ opacity:0; }
@@ -259,11 +268,11 @@ body::before{
 }
 /* Pupils are moved from script; the transition is what makes the look
    glide rather than snap. */
-.cat__pupils{ transition:transform .45s cubic-bezier(.2,.7,.3,1); }
+.cat__pupil{ transition:transform .45s cubic-bezier(.2,.7,.3,1); }
 
 @media (prefers-reduced-motion: reduce){
   .cat__body,.cat__eyes,.cat__tail{ animation:none; }
-  .cat__pupils{ transition:none; }
+  .cat__pupil{ transition:none; }
 }
 @media (max-width: 44rem){ .cat{ right:.9rem; bottom:.9rem; width:46px; } }
 
@@ -349,12 +358,15 @@ body::before{
 .nav__links a:hover,
 .nav__links a[aria-current="true"]{ color:var(--heading); border-bottom-color:var(--accent); }
 
-.nav__end{ display:flex; align-items:center; gap:.75rem; justify-self:end; }
+.nav__end{ display:flex; align-items:center; gap:.75rem; justify-self:end; flex:none; }
 
 .status{
   display:flex; align-items:center; gap:.5rem; color:var(--muted);
   background:transparent; border:1px solid transparent; border-radius:2px;
   padding:.35rem .1rem; font:inherit; cursor:default;
+  /* Without this the label breaks across lines in the flex nav and tears
+     the whole bar apart. */
+  white-space:nowrap; flex:none;
 }
 /* Only the owner gets a clickable pill — see the status panel in the script. */
 .status[data-owner="true"]{ cursor:pointer; padding-inline:.55rem; }
@@ -770,52 +782,56 @@ body::before{
 <!-- Owner-only. A static site has no login, so this never changes what
      visitors see: it previews a status and hands you the one line to commit. -->
 <div class="cat" id="cat" aria-hidden="true">
-  <svg viewBox="0 0 16 19" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 14 18" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <clipPath id="eyeL"><rect x="2" y="4" width="3" height="2"/></clipPath>
+      <clipPath id="eyeR"><rect x="7" y="4" width="3" height="2"/></clipPath>
+    </defs>
     <g class="cat__body" fill="currentColor">
-      <!-- pointed ears -->
-      <rect x="3" y="0" width="1" height="1"/><rect x="10" y="0" width="1" height="1"/>
-      <rect x="2" y="1" width="3" height="1"/><rect x="9" y="1" width="3" height="1"/>
-      <rect x="2" y="2" width="4" height="1"/><rect x="8" y="2" width="4" height="1"/>
-      <!-- head -->
-      <rect x="1" y="3" width="12" height="1"/>
-      <rect x="1" y="4" width="12" height="1"/>
-      <rect x="0" y="5" width="14" height="1"/>
-      <rect x="0" y="6" width="14" height="1"/>
-      <rect x="0" y="7" width="14" height="1"/>
-      <rect x="1" y="8" width="12" height="1"/>
-      <rect x="2" y="9" width="10" height="1"/>
-      <!-- body, narrower than the head so it reads as sitting -->
-      <rect x="3" y="10" width="9" height="1"/>
-      <rect x="3" y="11" width="9" height="1"/>
-      <rect x="2" y="12" width="11" height="1"/>
-      <rect x="2" y="13" width="11" height="1"/>
-      <rect x="2" y="14" width="11" height="1"/>
-      <rect x="2" y="15" width="11" height="1"/>
-      <rect x="1" y="16" width="13" height="1"/>
-      <rect x="1" y="17" width="13" height="1"/>
+      <!-- small triangular ears -->
+      <rect x="3" y="0" width="1" height="1"/><rect x="9" y="0" width="1" height="1"/>
+      <rect x="3" y="1" width="2" height="1"/><rect x="8" y="1" width="2" height="1"/>
+      <!-- head: narrower than the body, and it tapers to a neck -->
+      <rect x="2" y="2" width="9" height="1"/>
+      <rect x="2" y="3" width="9" height="1"/>
+      <rect x="1" y="4" width="11" height="1"/>
+      <rect x="1" y="5" width="11" height="1"/>
+      <rect x="1" y="6" width="11" height="1"/>
+      <rect x="2" y="7" width="9" height="1"/>
+      <rect x="3" y="8" width="7" height="1"/>
+      <!-- body, widening toward the base so it sits -->
+      <rect x="3" y="9" width="7" height="1"/>
+      <rect x="2" y="10" width="9" height="1"/>
+      <rect x="2" y="11" width="9" height="1"/>
+      <rect x="2" y="12" width="9" height="1"/>
+      <rect x="1" y="13" width="11" height="1"/>
+      <rect x="1" y="14" width="11" height="1"/>
+      <rect x="1" y="15" width="11" height="1"/>
+      <rect x="1" y="16" width="11" height="1"/>
       <!-- front paws -->
-      <rect x="2" y="18" width="4" height="1"/>
-      <rect x="9" y="18" width="4" height="1"/>
+      <rect x="2" y="17" width="3" height="1"/>
+      <rect x="8" y="17" width="3" height="1"/>
     </g>
-    <!-- tail, sweeping out and up behind; flicks on its own -->
+    <!-- tail, attached at the flank and curling up -->
     <g class="cat__tail" fill="currentColor">
-      <rect x="14" y="15" width="1" height="1"/>
-      <rect x="15" y="14" width="1" height="1"/>
-      <rect x="15" y="13" width="1" height="1"/>
-      <rect x="15" y="12" width="1" height="1"/>
-      <rect x="14" y="11" width="1" height="1"/>
+      <rect x="12" y="15" width="1" height="1"/>
+      <rect x="12" y="14" width="1" height="1"/>
+      <rect x="12" y="13" width="1" height="1"/>
+      <rect x="13" y="12" width="1" height="1"/>
+      <rect x="13" y="11" width="1" height="1"/>
+      <rect x="12" y="10" width="1" height="1"/>
     </g>
-    <!-- big round eyes: the whole reason these read as charming rather
-         than as a blob. Gold iris, dark pupil, and they blink. -->
+    <!-- Eyes kept small and set low on the head. Two earlier versions failed
+         here: a big bright iris with a pinprick pupil read as a stare, and a
+         gold ring around a fur-coloured pupil read as an empty frame. Solid
+         gold with one dark pupil is what the reference art actually does. -->
     <g class="cat__eyes">
-      <g fill="var(--brass)">
-        <rect x="2" y="5" width="3" height="3"/>
-        <rect x="9" y="5" width="3" height="3"/>
+      <g fill="var(--cat-eye)">
+        <rect x="2" y="4" width="3" height="2"/>
+        <rect x="7" y="4" width="3" height="2"/>
       </g>
-      <g class="cat__pupils" fill="currentColor">
-        <rect x="3" y="6" width="1" height="1"/>
-        <rect x="10" y="6" width="1" height="1"/>
-      </g>
+      <g clip-path="url(#eyeL)"><rect class="cat__pupil" x="3" y="4" width="1" height="2" fill="var(--cat-pupil)"/></g>
+      <g clip-path="url(#eyeR)"><rect class="cat__pupil" x="8" y="4" width="1" height="2" fill="var(--cat-pupil)"/></g>
     </g>
   </svg>
 </div>
@@ -1397,9 +1413,9 @@ body::before{
      trick: any more and the eyes read as googly rather than attentive. With
      no pointer (touch, or before the first move) they stay centred. */
   (function () {
-    var pupils = document.querySelector(".cat__pupils");
+    var pupils = document.querySelectorAll(".cat__pupil");
     var cat = document.getElementById("cat");
-    if (!pupils || !cat || reduced) { return; }
+    if (!pupils.length || !cat || reduced) { return; }
     var pending = false, mx = 0, my = 0;
 
     function track() {
@@ -1411,9 +1427,9 @@ body::before{
       var d = Math.sqrt(dx * dx + dy * dy) || 1;
       var reach = Math.max(window.innerWidth, window.innerHeight) * 0.35;
       var pull = Math.min(1, d / reach);
-      pupils.style.transform =
-        "translate(" + ((dx / d) * pull * 0.85).toFixed(2) + "px," +
-                       ((dy / d) * pull * 0.7).toFixed(2) + "px)";
+      var t = "translate(" + ((dx / d) * pull * 0.75).toFixed(2) + "px," +
+                             ((dy / d) * pull * 0.25).toFixed(2) + "px)";
+      for (var i = 0; i < pupils.length; i++) { pupils[i].style.transform = t; }
     }
     window.addEventListener("pointermove", function (e) {
       mx = e.clientX; my = e.clientY;
