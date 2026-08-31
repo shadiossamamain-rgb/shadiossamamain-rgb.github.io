@@ -778,7 +778,7 @@ body::before{
 .footer{
   background:var(--field-bg); color:var(--field-text);
   padding:2.5rem var(--pad-x);
-  display:flex; flex-wrap:wrap; gap:1rem; align-items:center; justify-content:space-between;
+  display:flex; flex-wrap:wrap; gap:1.25rem 2.25rem; align-items:center; justify-content:space-between;
   font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
   transition:background-color .35s ease, color .35s ease;
 }
@@ -787,6 +787,46 @@ body::before{
   display:inline-block; padding-block:.6rem; /* tap target */
 }
 .footer a:hover{ color:var(--field-head); }
+
+/* The mark, echoing the nav rather than inventing a second wordmark.
+   Not a link: "Back to top" already sits at the end of this row, and two
+   controls doing one job is how a footer starts reading as filler. */
+.footer__mark{
+  display:flex; align-items:center; gap:.3rem;
+  font-family:var(--display); font-weight:700; font-size:1rem;
+  font-variation-settings:"SOFT" 0,"WONK" 1;
+  letter-spacing:-.005em; text-transform:none; line-height:1;
+  color:var(--field-head);
+}
+.footer__glyph{
+  width:1.7rem; height:1.7rem; flex:none;
+  display:grid; place-items:center;
+  background:var(--field-head); color:var(--field-bg);
+  border-radius:4px;
+  transition:background-color .35s ease, color .35s ease;
+}
+
+/* Icon row. The circles carry no visible text, so each one's aria-label is
+   its only name — keep those in step with the Links list in Contact. */
+.footer__social{ display:flex; align-items:center; gap:.6rem; list-style:none; }
+.footer a.footer__ico{
+  width:2.3rem; height:2.3rem; padding:0; /* overrides the row's tap padding */
+  display:grid; place-items:center;
+  border:1px solid var(--field-rule); border-radius:50%;
+  color:var(--field-text);
+  transition:border-color .2s ease, color .2s ease, background-color .2s ease;
+}
+.footer a.footer__ico:hover{
+  color:var(--field-bg); background:var(--field-head); border-color:var(--field-head);
+}
+.footer__ico svg{ width:1rem; height:1rem; display:block; fill:currentColor; }
+
+.footer__cv{ display:inline-flex; align-items:center; gap:.45rem; }
+.footer__legal{ color:var(--field-text); opacity:.75; }
+
+@media (max-width:620px){
+  .footer{ gap:1rem 1.5rem; }
+}
 
 /* ============================================================
    REVEAL
@@ -1337,12 +1377,10 @@ body::before{
             <!-- The address is assembled by JavaScript at runtime so it does not
                  appear in the page source. -->
             <li><a id="mail-link" href="#contact"><span id="mail-text">Email</span> <span>Direct</span></a></li>
+            <li><a href="assets/CV.pdf" download>CV <span>PDF</span></a></li>
             <!--
               TO ADD LINKEDIN: uncomment and replace YOUR_HANDLE.
               <li><a href="https://linkedin.com/in/YOUR_HANDLE">LinkedIn <span>Profile</span></a></li>
-
-              TO ADD A CV: drop the PDF at assets/CV.pdf and uncomment.
-              <li><a href="assets/CV.pdf">CV <span>PDF</span></a></li>
             -->
           </ul>
         </aside>
@@ -1354,8 +1392,40 @@ body::before{
 </main>
 
 <footer class="footer">
-  <span>&copy; <span id="year">2026</span> Shadi</span>
-  <span>Built with HTML, CSS and JavaScript</span>
+  <!-- Decorative repeat of the nav mark. The nav anchor already carries the
+       accessible name, so this one is hidden rather than announced twice. -->
+  <span class="footer__mark" aria-hidden="true">
+    <span class="footer__glyph">S</span><span>hadi</span>
+  </span>
+
+  <ul class="footer__social">
+    <li>
+      <a class="footer__ico" href="https://github.com/shadiossamamain-rgb" aria-label="GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+    </li>
+    <!-- The address is assembled by JavaScript at runtime so it does not
+         appear in the page source. Falls back to the Contact section. -->
+    <li>
+      <a class="footer__ico" id="footer-mail" href="#contact" aria-label="Email">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12a1 1 0 0 1 1 1v.28l-7 3.9-7-3.9V5a1 1 0 0 1 1-1Zm-1 3.02V11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7.02l-6.51 3.63a1 1 0 0 1-.98 0L1 7.02Z"/></svg>
+      </a>
+    </li>
+    <!--
+      TO ADD LINKEDIN: uncomment and replace YOUR_HANDLE. Do the same to the
+      LinkedIn row in the Contact links, so both carry the one handle.
+      <li>
+        <a class="footer__ico" href="https://linkedin.com/in/YOUR_HANDLE" aria-label="LinkedIn">
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146Zm4.943 12.248V6.169H2.542v7.225h2.401Zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016Zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4Z"/></svg>
+        </a>
+      </li>
+    -->
+  </ul>
+
+  <a class="footer__cv" href="assets/CV.pdf" download>Download CV <span aria-hidden="true">&#8595;</span></a>
+
+  <span class="footer__legal">&copy; <span id="year">2026</span> Shadi</span>
+
   <a href="#top">Back to top &#8593;</a>
 </footer>
 
@@ -1390,6 +1460,8 @@ body::before{
   var mailHost = "outlook.com";
   var address = mailUser + "@" + mailHost;
   mailLink.setAttribute("href", "mailto:" + address);
+  var footerMail = document.getElementById("footer-mail");
+  if (footerMail) { footerMail.setAttribute("href", "mailto:" + address); }
   /* Shown, not just linked — a contact link with no visible address makes
      people hunt for it. Still assembled at runtime so it is absent from the
      served HTML that basic scrapers read. */
